@@ -1,9 +1,7 @@
-#!/command/with-contenv bashio
-# shellcheck shell=bash
-# shellcheck disable=SC1091
+#!/usr/bin/env bashio
 
-local ssh_user
-local ssh_user_home
+ssh_user=''
+ssh_user_home=''
 
 # Check ssh_keys
 if bashio::config.is_empty 'ssh_keys'; then

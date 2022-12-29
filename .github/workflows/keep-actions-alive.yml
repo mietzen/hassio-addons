@@ -1,0 +1,25 @@
+name: Keep actions alive
+
+on: 
+  schedule:
+    - cron: "23 23 23 * *"
+  workflow_dispatch:
+
+jobs:
+  keep-alive:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Push update
+        env:
+          GITHUB_TOKEN: ${{ secrets.PUSH_TOKEN }}
+        run: |
+          BRANCH_NAME="stay_alive_action"
+          REPO_URL=https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git
+          git clone -b "${BRANCH_NAME}" "${REPO_URL}" "${BRANCH_NAME}"
+          cd ${BRANCH_NAME}
+          date > last_updated
+          git add last_updated
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action Bot"
+          git commit -q -m "Keep alive commit for github actions"
+          git push -f "${REPO_URL}" HEAD:${BRANCH_NAME}

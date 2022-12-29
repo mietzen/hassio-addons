@@ -1,0 +1,5 @@
+AcceptEnv LANG LC_*
+PasswordAuthentication no
+PrintMotd no
+Subsystem sftp /usr/lib/openssh/sftp-server
+UsePAM yes

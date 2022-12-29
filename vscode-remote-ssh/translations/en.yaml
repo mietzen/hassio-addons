@@ -1,0 +1,7 @@
+configuration:
+  ssh_keys:
+    name: Authorized SSH Keys
+    description: SSH keys that are authorized to connect to the Visual Studio Code Remote SSH Server.
+  user:
+    name: Username
+    description: Username for SSH login.

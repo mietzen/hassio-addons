@@ -35,3 +35,9 @@ RUN wget -O /usr/bin/tempio "https://github.com/home-assistant/tempio/releases/d
 
 # Run script
 CMD [ "/run.sh" ]
+
+ARG VERSION
+LABEL \
+  io.hass.version="${VERSION}" \
+  io.hass.type="addon" \
+  io.hass.arch="armhf|aarch64|i386|amd64|armv7"

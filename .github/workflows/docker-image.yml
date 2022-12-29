@@ -28,15 +28,23 @@ jobs:
     - name: Set up Docker Buildx
       id: buildx
       uses: docker/setup-buildx-action@v2
-      
+
+    - name: Install yq
+      id: perquisite
+      run: |
+        apt-get update
+        apt-get install -y yq
+
     - name: Build
       id: build
       env:
         DOCKER_USER: ${{ secrets.DOCKER_HUB_USERNAME }}
       run: |
         cd vscode-remote-ssh
+        VERSION=$(yq -r .version config.yaml)
         docker buildx build \
-          --tag "${DOCKER_USER}/vscode-remote-ssh:latest" \
+          --tag "${DOCKER_USER}/vscode-remote-ssh:${VERSION}" \
           --platform=linux/arm64,linux/amd64,linux/386,linux/arm/v7,linux/arm/v6 \
+          --build-arg VERSION=${VERSION}
           --push \
           -f Dockerfile.buildx .

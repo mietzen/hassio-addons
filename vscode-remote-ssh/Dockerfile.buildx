@@ -42,3 +42,9 @@ RUN case ${TARGETPLATFORM} in \
 
 # Run script
 CMD [ "/run.sh" ]
+
+ARG VERSION
+LABEL \
+  io.hass.version="${VERSION}" \
+  io.hass.type="addon" \
+  io.hass.arch="armhf|aarch64|i386|amd64|armv7"

@@ -21,7 +21,7 @@
   image: mietzen/vscode-remote-ssh
   init: false
   ports:
-    - "22/tcp:22000"
+    22/tcp: 22000
   options:
     ssh_keys: []
     user: 'hass'

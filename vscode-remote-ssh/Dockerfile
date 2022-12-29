@@ -12,7 +12,9 @@ RUN apt-get update && \
         openssh-server \
         wget \
         sudo \
-        ca-certificates\
+        ca-certificates \
+        curl \
+        jq \
     && \
     rm -rf /tmp/* /var/{cache,log}/* /var/lib/apt/lists/*
 

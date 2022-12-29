@@ -5,7 +5,8 @@ ENV LANG C.UTF-8
 
 # Copy script
 COPY rootfs /
-RUN chmod a+x /run.sh
+RUN chmod a+x /run.sh && \
+    mkdir -p /run/sshd
 
 RUN apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \

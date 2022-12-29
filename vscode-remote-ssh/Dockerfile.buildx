@@ -1,5 +1,4 @@
-ARG BUILD_FROM=debian:bullseye-slim
-FROM ${BUILD_FROM}
+FROM debian:bullseye-slim
 
 ENV LANG C.UTF-8
 
@@ -24,10 +23,18 @@ RUN wget -O /tmp/bashio.tar.gz https://github.com/hassio-addons/bashio/archive/v
     ln -s /usr/lib/bashio/bashio /usr/bin/bashio 
 
 # Add tempio and cli
-ARG BUILD_ARCH
-RUN wget -O /usr/bin/tempio "https://github.com/home-assistant/tempio/releases/download/2021.09.0/tempio_${BUILD_ARCH}" && \
+ARG TARGETPLATFORM
+RUN case ${TARGETPLATFORM} in \
+        "linux/amd64") dl_arch="amd64" ;; \
+        "linux/arm64") dl_arch="aarch64" ;; \
+        "linux/arm/v7") dl_arch="armv7" ;; \
+        "linux/arm/v6") dl_arch="armhf" ;; \
+        "linux/386") dl_arch="i386" ;; \
+        *) echo "unsupported architecture ${TARGETPLATFORM}" && exit 1 ;; \
+    esac && \
+    wget -O /usr/bin/tempio "https://github.com/home-assistant/tempio/releases/download/2021.09.0/tempio_${dl_arch}" && \
     chmod a+x /usr/bin/tempio && \
-    wget -O /usr/bin/ha "https://github.com/home-assistant/cli/releases/download/4.18.0/ha_${BUILD_ARCH}" && \
+    wget -O /usr/bin/ha "https://github.com/home-assistant/cli/releases/download/4.18.0/ha_${dl_arch}" && \
     chmod a+x /usr/bin/ha
 
 # Run script

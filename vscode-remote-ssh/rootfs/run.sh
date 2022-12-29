@@ -16,4 +16,4 @@ if bashio::config.has_value 'ssh_keys'; then
     done <<< "$(bashio::config 'ssh_keys')"
 fi
 
-exec /usr/sbin/sshd -d
+exec /usr/sbin/sshd -D

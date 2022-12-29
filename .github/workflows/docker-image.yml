@@ -32,7 +32,7 @@ jobs:
     - name: Install yq
       id: perquisite
       run: |
-        snap install yq
+        sudo snap install yq
 
     - name: Build
       id: build

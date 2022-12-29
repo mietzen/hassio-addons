@@ -45,6 +45,16 @@ CMD [ "/run.sh" ]
 
 ARG VERSION
 LABEL \
-  io.hass.version="${VERSION}" \
-  io.hass.type="addon" \
-  io.hass.arch="armhf|aarch64|i386|amd64|armv7"
+    io.hass.name="Visual Studio Code Remote SSH Server" \
+    io.hass.description="This add-on lets you use Visual Studio Code Remote SSH to edit your Home Assistant config." \
+    io.hass.version="${VERSION}" \
+    io.hass.type="addon" \
+    io.hass.arch="armhf|aarch64|i386|amd64|armv7" \
+    maintainer="Nils Stein <social.nst@mailbox.org>" \
+    org.opencontainers.image.title="Visual Studio Code Remote SSH Server" \
+    org.opencontainers.image.description="This add-on lets you use Visual Studio Code Remote SSH to edit your Home Assistant config." \
+    org.opencontainers.image.vendor="Nils Home Assistant Add-ons" \
+    org.opencontainers.image.authors="Nils Stein <social.nst@mailbox.org>" \
+    org.opencontainers.image.licenses="MIT" \
+    org.opencontainers.image.source="https://github.com/mietzen/hassio-addons" \
+    org.opencontainers.image.documentation="https://github.com/mietzen/hassio-addons/blob/main/vscode-remote-ssh/README.md"

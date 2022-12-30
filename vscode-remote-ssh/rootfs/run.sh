@@ -11,7 +11,7 @@ ln -s /data/root /root
 
 # Check ssh_keys
 if bashio::config.is_empty 'ssh_keys'; then
-    bashio::log.fatal 'Invalid Configuration.'
+    bashio::log.fatal 'Invalid configuration.'
     bashio::log.fatal 'Please set a authorized key!'
     bashio::exit.nok
 fi

@@ -4,10 +4,8 @@
 if ! [ -d /data/root ]; then
     mv /root /data/
 fi
-if ! [ -e /root ] ; then
-    rm -rf /root
-    ln -s /data/root /root
-fi
+rm -rf /root
+ln -s /data/root /root
 
 # Check ssh_keys
 if bashio::config.is_empty 'ssh_keys'; then

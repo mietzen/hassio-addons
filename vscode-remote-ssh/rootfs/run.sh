@@ -4,6 +4,9 @@
 if ! [ -d /data/root ]; then
     bashio::log.notice 'Moving home directory to persistent storage.'
     mv /root /data/
+    bashio::log.notice 'Copy default zsh config.'
+    rm -rf /data/root/.zshrc
+    cp /etc/default/ohmyzsh/zshrc /data/root/.zshrc
 fi
 bashio::log.notice 'Symlinking home directory to persistent storage.'
 rm -rf /root

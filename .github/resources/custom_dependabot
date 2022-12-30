@@ -1,0 +1,53 @@
+#!/usr/bin/env python3
+
+import json
+import subprocess 
+import re
+import sys
+import os
+import yaml
+from dockerfile_parse import DockerfileParser
+
+cmd = 'skopeo --override-os linux inspect docker://debian'
+
+process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+stdout, stderr = process.communicate()
+if stderr:
+    print(stderr)
+    sys.exit(1)
+
+result = json.loads(stdout.decode('utf-8'))
+latest_image_date = max([int(x.split('-')[1]) for x in result['RepoTags'] if re.match(r"bullseye-[0-9]{8}-slim", x)])
+
+cwd = os.getcwd()
+for dirpath, _, files in os.walk(cwd):
+    for f in files:
+        if 'dockerfile' == f.casefold():
+            # Check base image
+            dockerfile = os.path.join(dirpath, f)
+            dfp = DockerfileParser(path=dockerfile)
+            base_image_split = dfp.baseimage.split('-')
+            if int(base_image_split[1]) < latest_image_date:
+                # Bump base image version
+                base_image_split[1] = str(latest_image_date)
+                new_base_image = '-'.join(base_image_split)
+                dfp.baseimage = new_base_image
+                # Bump addon config patch version
+                config_file = os.path.join(dirpath, 'config.yaml')
+                if os.path.exists(config_file):
+                    with open(config_file, "r") as stream:
+                        config = yaml.safe_load(stream)
+                    version = config['version'].split('.')
+                    config['version'] = '.'.join([version[0], version[1], str(int(version[2]) + 1)])
+                    new_addon_version = config['version']
+                    with open(config_file, "w") as stream:
+                        yaml.safe_dump(config, stream, sort_keys=False)
+                # Append CHANGELOG.md
+                changelog = os.path.join(dirpath, 'CHANGELOG.md')
+                if os.path.exists(changelog):
+                    with open(changelog, "r") as stream:
+                        changelog_content = stream.readlines()
+                    new_entry = "## Version " + new_addon_version + "\n- Updated base image to " + new_base_image + "\n"
+                    changelog_content = [changelog_content[0], new_entry] + changelog_content[1:]
+                    with open(changelog, "w") as stream:
+                        stream.write(''.join(changelog_content))

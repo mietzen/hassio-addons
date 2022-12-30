@@ -67,6 +67,7 @@ jobs:
       run: |
         cd ${ADDON}
         VERSION=$(yq -r .version config.yaml)
+        echo "Building ${ADDON}, Version: ${VERSION}"
         docker buildx build \
           --tag "${DOCKER_USER}/${ADDON}:${VERSION}" \
           --platform=linux/arm64,linux/amd64,linux/386,linux/arm/v7,linux/arm/v6 \

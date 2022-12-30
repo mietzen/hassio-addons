@@ -26,7 +26,7 @@ jobs:
         else
           echo "build=no" >> $GITHUB_OUTPUT
         fi
-        output=$(git --no-pager diff HEAD HEAD~1 --name-only | grep -v -E '^\.' | cut -d'/' -f1 | uniq | xargs echo -n | jq -Rsc 'split(" ") | "{ \"addons\": \(.) }"')
+        output=$(git --no-pager diff HEAD HEAD~1 --name-only | grep -v -E '^\.' | cut -d'/' -f1 | uniq | xargs echo -n | jq -Rsc 'split(" ") | { "addons": (.) }')
         echo "matrix=${output}" >> $GITHUB_OUTPUT
 
   Build:

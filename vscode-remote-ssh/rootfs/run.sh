@@ -1,8 +1,13 @@
 #!/usr/bin/env bashio
 
 # Make root home persistent
-mv /root /data/
-ln -s /data/root /root
+if ! [ -d /data/root ]; then
+    mv /root /data/
+fi
+if ! [ -e /root ] ; then
+    rm -rf /root
+    ln -s /data/root /root
+fi
 
 # Check ssh_keys
 if bashio::config.is_empty 'ssh_keys'; then

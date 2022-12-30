@@ -8,19 +8,30 @@ COPY rootfs /
 RUN chmod a+x /run.sh && \
     mkdir -p /run/sshd
 
+# Install prerequisites
 RUN apt-get update && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-        openssh-server \
-        wget \
-        sudo \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y \
         ca-certificates \
         curl \
+        git \
         jq \
+        openssh-server \
+        python3 \
+        python3-pip \
+        rsync \
+        wget \
+        zsh \
     && \
     rm -rf /tmp/* /var/{cache,log}/* /var/lib/apt/lists/*
 
+# Setup ohmyzsh
+RUN curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh --unattended && \
+    git clone https://github.com/zsh-users/zsh-syntax-highlighting.git /root/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting && \
+    chsh -s $(which zsh)
+
 # Add bashio
-RUN wget -O /tmp/bashio.tar.gz https://github.com/hassio-addons/bashio/archive/v0.14.3.tar.gz && \
+ARG BASHIO_VERSION=v0.14.3
+RUN wget -O /tmp/bashio.tar.gz "https://github.com/hassio-addons/bashio/archive/${BASHIO_VERSION}.tar.gz" && \
     mkdir /tmp/bashio && \
     tar zxvf tmp/bashio.tar.gz --strip 1 -C /tmp/bashio && \
     mv /tmp/bashio/lib /usr/lib/bashio && \
@@ -28,9 +39,11 @@ RUN wget -O /tmp/bashio.tar.gz https://github.com/hassio-addons/bashio/archive/v
 
 # Add tempio and cli
 ARG BUILD_ARCH
-RUN wget -O /usr/bin/tempio "https://github.com/home-assistant/tempio/releases/download/2021.09.0/tempio_${BUILD_ARCH}" && \
+ARG TEMPIO_VERSION=2021.09.0
+ARG HA_CLI_VERSION=4.18.0
+RUN wget -O /usr/bin/tempio "https://github.com/home-assistant/tempio/releases/download/${TEMPIO_VERSION}/tempio_${BUILD_ARCH}" && \
     chmod a+x /usr/bin/tempio && \
-    wget -O /usr/bin/ha "https://github.com/home-assistant/cli/releases/download/4.18.0/ha_${BUILD_ARCH}" && \
+    wget -O /usr/bin/ha "https://github.com/home-assistant/cli/releases/download/${HA_CLI_VERSION}/ha_${BUILD_ARCH}" && \
     chmod a+x /usr/bin/ha
 
 # Run script

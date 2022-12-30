@@ -1,5 +1,12 @@
 #!/usr/bin/env bashio
 
+# Make root home persistent
+chwon root:root /data 
+chmod 700 /data
+mv {/root/*,/root/.*} /data/
+rm -rf /root
+ln -s /data /root
+
 # Check ssh_keys
 if bashio::config.is_empty 'ssh_keys'; then
     bashio::log.fatal 'Invalid Configuration.'

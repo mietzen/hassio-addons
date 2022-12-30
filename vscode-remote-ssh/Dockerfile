@@ -14,10 +14,12 @@ RUN apt-get update && \
         curl \
         git \
         jq \
+        nano \
         openssh-server \
         python3 \
         python3-pip \
-        rsync \ 
+        rsync \
+        vi \
         wget \
         zsh \
     && \

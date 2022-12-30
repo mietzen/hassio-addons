@@ -24,8 +24,8 @@ jobs:
       - name: Push changes
         run: |
           if ! [ -z "$(git status --porcelain)" ]; then 
-            git config --local user.email "support@github.com"
-            git config --local user.name "dependabot[bot]"
+            git config --local user.email "action@github.com"
+            git config --local user.name "GitHub Action Bot"
             git commit -a -m "Updated base images"
             git push
           else

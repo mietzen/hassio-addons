@@ -2,10 +2,10 @@
 
 # Make root home persistent
 if ! [ -d /data/root ]; then
-    bashio::log.notice 'Moving home directory to persistent storage'
+    bashio::log.notice 'Moving home directory to persistent storage.'
     mv /root /data/
 fi
-bashio::log.notice 'Symlinking home directory to persistent storage'
+bashio::log.notice 'Symlinking home directory to persistent storage.'
 rm -rf /root
 ln -s /data/root /root
 

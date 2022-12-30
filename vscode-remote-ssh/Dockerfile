@@ -1,5 +1,4 @@
-ARG BUILD_FROM=debian:bullseye-slim
-FROM ${BUILD_FROM}
+FROM debian:bullseye-20221205-slim
 
 ENV LANG C.UTF-8
 
@@ -18,7 +17,7 @@ RUN apt-get update && \
         openssh-server \
         python3 \
         python3-pip \
-        rsync \
+        rsync \ 
         wget \
         zsh \
     && \
@@ -38,12 +37,19 @@ RUN wget -O /tmp/bashio.tar.gz "https://github.com/hassio-addons/bashio/archive/
     ln -s /usr/lib/bashio/bashio /usr/bin/bashio 
 
 # Add tempio and cli
-ARG BUILD_ARCH
 ARG TEMPIO_VERSION=2021.09.0
 ARG HA_CLI_VERSION=4.18.0
-RUN wget -O /usr/bin/tempio "https://github.com/home-assistant/tempio/releases/download/${TEMPIO_VERSION}/tempio_${BUILD_ARCH}" && \
+RUN case $(uname -m) in \
+        "x86_64") dl_arch="amd64" ;; \
+        "aarch64") dl_arch="aarch64" ;; \
+        "armv7l") dl_arch="armv7" ;; \
+        "armv6l") dl_arch="armhf" ;; \
+        "i386") dl_arch="i386" ;; \
+        *) echo "unsupported architecture ${TARGETPLATFORM}" && exit 1 ;; \
+    esac && \
+    wget -O /usr/bin/tempio "https://github.com/home-assistant/tempio/releases/download/${TEMPIO_VERSION}/tempio_${dl_arch}" && \
     chmod a+x /usr/bin/tempio && \
-    wget -O /usr/bin/ha "https://github.com/home-assistant/cli/releases/download/${HA_CLI_VERSION}/ha_${BUILD_ARCH}" && \
+    wget -O /usr/bin/ha "https://github.com/home-assistant/cli/releases/download/${HA_CLI_VERSION}/ha_${dl_arch}" && \
     chmod a+x /usr/bin/ha
 
 # Run script

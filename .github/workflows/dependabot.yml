@@ -11,9 +11,7 @@ jobs:
     steps:
       - name: Install perquisite
         run: |
-          sudo apt-get update
-          sudo apt-get -y install skopeo
-          pip3 install dockerfile-parse pyyaml
+          pip3 install dockerfile-parse
       - name: Checkout Repo
         env:
           GITHUB_TOKEN: ${{ secrets.PUSH_TOKEN }}
@@ -28,7 +26,7 @@ jobs:
           if ! [ -z "$(git status --porcelain)" ]; then 
             git config --local user.email "action@github.com"
             git config --local user.name "GitHub Action Bot"
-            git commit -m "Updated base images"
+            git commit -a -m "Updated base images"
             git push "${REPO_URL}" HEAD:main
           else
            echo "Nothing changed!"

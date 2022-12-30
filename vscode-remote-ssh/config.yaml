@@ -18,7 +18,6 @@
   stdin: true
   map:
     - config:rw
-    - data:rw
   image: mietzen/vscode-remote-ssh
   init: false
   ports:

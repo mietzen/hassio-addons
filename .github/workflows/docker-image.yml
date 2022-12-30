@@ -11,6 +11,7 @@ jobs:
   Matrix:
     runs-on: ubuntu-latest
     outputs:
+      build: ${{ steps.set-matrix.outputs.no_build }}
       built_matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
     - name: Checkout
@@ -18,12 +19,18 @@ jobs:
     - name: Build Matrix all addons
       id: set-matrix
       run: |
+        if [ git --no-pager diff --name-only | grep  -E '^\.' | cut -d'/' -f1 | uniq ]; then
+          echo "build=1" >> $GITHUB_OUTPUT
+        else
+          echo "build=0" >> $GITHUB_OUTPUT
+        fi
         output=$(git --no-pager diff --name-only | grep -v -E '^\.' | cut -d'/' -f1 | uniq | xargs echo -n | jq -Rsc 'split(" ") | "{ \"addons\": \(.) }"')
         echo "matrix=${output}" >> $GITHUB_OUTPUT
 
   Build:
     runs-on: ubuntu-latest
     needs: Matrix
+    if: ${{ needs.Matrix.outputs.build }}
     strategy:
       fail-fast: false
       matrix:

@@ -18,7 +18,6 @@ This add-on lets you use Visual Studio Code Remote SSH to edit your Home Assista
 _Example configuration_:
 
 ```yaml
-user: 'yourusername'
 ssh_keys: ["ssh-rsa yourverylongsshkey", "ssh-ed25519 andanotherone"]
 ```
 

@@ -25,14 +25,19 @@ for dirpath, _, files in os.walk(cwd):
         if 'dockerfile' == f.casefold():
             # Check base image
             dockerfile = os.path.join(dirpath, f)
+            print('Found Dockerfile: ' + str(dockerfile))
             dfp = DockerfileParser(path=dockerfile)
             base_image_split = dfp.baseimage.split('-')
+            print('Current Base Image: ' + '-'.join(base_image_split))
+            print('Looking for newer Image..')
             if int(base_image_split[1]) < latest_image_date:
                 # Bump base image version
                 base_image_split[1] = str(latest_image_date)
                 new_base_image = '-'.join(base_image_split)
                 dfp.baseimage = new_base_image
+                print('Updating Base Image to: ' + new_base_image)
                 # Bump addon config patch version
+                print('Looking for config.yaml')
                 config_file = os.path.join(dirpath, 'config.yaml')
                 if os.path.exists(config_file):
                     with open(config_file, "r") as stream:
@@ -42,7 +47,11 @@ for dirpath, _, files in os.walk(cwd):
                     new_addon_version = config['version']
                     with open(config_file, "w") as stream:
                         yaml.safe_dump(config, stream, sort_keys=False)
+                    print('Bumped version from: ' + version + ' to: ' + new_addon_version)
+                else:
+                    print('config.yaml not found')
                 # Append CHANGELOG.md
+                print('Looking for CHANGELOG.md')
                 changelog = os.path.join(dirpath, 'CHANGELOG.md')
                 if os.path.exists(changelog):
                     with open(changelog, "r") as stream:
@@ -51,3 +60,9 @@ for dirpath, _, files in os.walk(cwd):
                     changelog_content = [changelog_content[0], new_entry] + changelog_content[1:]
                     with open(changelog, "w") as stream:
                         stream.write(''.join(changelog_content))
+                    print('Create new changelog entry')
+                else:
+                    print('CHANGELOG.md not found')
+            else:
+                print('Image is already up to date!')
+                print('')

@@ -100,9 +100,7 @@ jobs:
           echo "============================================================="
           echo "Testing: ${DOCKER_USER}/${ADDON}:${VERSION}-${ARCH}-${BUILD_NR}"
           echo "============================================================="
-          echo ""          
-          echo "Waiting for conatiner to spin up..."
-          sleep 20
+          echo ""
           inspec exec ./test/integration -t docker://${ADDON}
           echo "Teardown"
           docker container stop ${ADDON}

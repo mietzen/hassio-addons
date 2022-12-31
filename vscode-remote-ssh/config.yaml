@@ -18,7 +18,7 @@ hassio_role: manager
 stdin: true
 map:
 - config:rw
-image: mietzen/vscode-remote-ssh
+image: mietzen/hass-addon-vscode-remote-ssh
 init: false
 ports:
   22/tcp: 22000

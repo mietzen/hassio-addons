@@ -1,8 +1,9 @@
 export ZSH="$HOME/.oh-my-zsh"
-source $ZSH/oh-my-zsh.sh
-
-plugins=(git extract pip python rsync zsh-syntax-highlighting)
 ZSH_THEME="robbyrussell"
 DISABLE_AUTO_UPDATE="true"
+plugins=(git extract pip python sudo rsync zsh-syntax-highlighting)
+source $ZSH/oh-my-zsh.sh
+
+export EDITOR=nano
 unsetopt nomatch
 cd /config

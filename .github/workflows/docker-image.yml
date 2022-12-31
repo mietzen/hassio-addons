@@ -58,19 +58,83 @@ jobs:
       id: perquisite
       run: |
         sudo snap install yq
+        curl https://omnitruck.chef.io/install.sh | sudo bash -s -- -P inspec
+        inspec --chef-license=accept
 
-    - name: Build
+    - name: Build and Test
       id: build
       env:
         DOCKER_USER: ${{ secrets.DOCKER_HUB_USERNAME }}
         ADDON: ${{ matrix.addons }}
+        BUILD_NR: ${{ github.run_number }}
+        GITHUB_EVENT_NAME: ${{ github.event_name }}
+      working-directory: ./${{ matrix.addons }}
       run: |
-        cd ${ADDON}
         VERSION=$(yq -r .version config.yaml)
-        echo "Building ${ADDON}, Version: ${VERSION}"
-        docker buildx build \
-          --tag "${DOCKER_USER}/${ADDON}:${VERSION}" \
-          --platform=linux/arm64,linux/amd64,linux/386,linux/arm/v7,linux/arm/v6 \
-          --build-arg "VERSION=${VERSION}" \
-          --push \
-          -f Dockerfile .
+        declare -a PLATFORMS=("linux/arm64" "linux/amd64" "linux/386" "linux/arm/v7" "linux/arm/v6")
+        for PLATFORM in "${PLATFORMS[@]}"; do
+          ARCH=$(echo "${PLATFORM}" | awk -F  "/" '{print $2$3}')
+
+          echo ""
+          echo "====================================="
+          echo "Building: ${DOCKER_USER}/${ADDON}:${VERSION}-${ARCH}-${BUILD_NR}"
+          echo "====================================="
+          docker buildx build \
+            --tag "${DOCKER_USER}/${ADDON}:${VERSION}-${ARCH}-${BUILD_NR}" \
+            --platform ${PLATFORM} \
+            --build-arg "VERSION=${VERSION}" \
+            --load \
+            -f Dockerfile .
+
+          echo ""
+          echo "====================================="
+          echo "Setup Tests for: ${DOCKER_USER}/${ADDON}:${VERSION}-${ARCH}-${BUILD_NR}"
+          echo "====================================="
+          docker run -d --platform ${DOCKER_PLATFORM} --rm --name ${ADDON} -v $(pwd)/test/resources/options.json:/data/options.json "${DOCKER_USER}/${ADDON}:${VERSION}-${ARCH}-${BUILD_NR}"
+          docker exec -u 0 ${ADDON} apt-get update
+          docker exec -u 0 ${ADDON} apt-get install net-tools procps -y
+
+          echo ""
+          echo "====================================="
+          echo "Testing: ${DOCKER_USER}/${ADDON}:${VERSION}-${ARCH}-${BUILD_NR}"
+          echo "====================================="
+          echo "Waiting for conatiner to spin up..."
+          sleep 20
+          inspec exec ./test/integration -t docker://${ADDON}
+          echo "Teardown"
+          docker container stop ${ADDON}
+
+          if [[ "${GITHUB_EVENT_NAME}" == 'push' ]]; then
+            echo ""
+            echo "====================================="
+            echo "Pushing: ${DOCKER_USER}/${ADDON}:${VERSION}-${ARCH}-${BUILD_NR}"
+            echo "====================================="
+            docker tag "${DOCKER_USER}/${ADDON}:${VERSION}-${ARCH}-${BUILD_NR}" "${DOCKER_USER}/${ADDON}:${VERSION}-${ARCH}"
+            docker push "${DOCKER_USER}/${ADDON}:${VERSION}-${ARCH}-${BUILD_NR}"
+            docker push "${DOCKER_USER}/${ADDON}:${VERSION}-${ARCH}"
+          fi
+        done
+
+    - name: Create and push shared manifest
+      if: github.event_name == 'push'
+      env:
+        DOCKER_USER: ${{ secrets.DOCKER_HUB_USERNAME }}
+        ADDON: ${{ matrix.addons }}
+        BUILD_NR: ${{ github.run_number }}
+      working-directory: ./${{ matrix.addons }}
+      run: |
+        VERSION=$(yq -r .version config.yaml)
+        declare -a PLATFORMS=("linux/arm64" "linux/amd64" "linux/386" "linux/arm/v7" "linux/arm/v6")
+
+        echo "#!/bin/bash" > push-shared-tags.sh
+        echo -n "docker manifest create ${DOCKER_USER}/${ADDON}:${VERSION}" >> push-shared-tags.sh
+        for PLATFORM in "${PLATFORMS[@]}"; do
+          echo -n " ${DOCKER_USER}/${ADDON}:${VERSION}-${ARCH}-${BUILD_NR}" >> push-shared-tags.sh
+        done
+        echo "" >> push-shared-tags.sh
+        echo "docker manifest push ${DOCKER_USER}/${ADDON}:${VERSION}" >> push-shared-tags.sh
+        echo "exit 0" >> push-shared-tags.sh
+        cat push-shared-tags.sh
+        chmod +x ./push-shared-tags.sh
+        ./push-shared-tags.sh
+        rm -rf ./push-shared-tags.sh

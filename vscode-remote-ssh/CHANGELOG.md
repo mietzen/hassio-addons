@@ -1,4 +1,6 @@
 # Changelog:
+## Version 0.3.2
+- Added Tests and option to run without supervisor
 ## Version 0.3.1
 - fixed zshrc
 ## Version 0.3.0

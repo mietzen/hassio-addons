@@ -6,7 +6,7 @@ RUN apt-get update && \
     rm -rf /tmp/* /var/{cache,log}/* /var/lib/apt/lists/*
 
 # Run p910nd
-CMD [ '/usr/sbin/p910nd', '-d' ]
+CMD ["/usr/sbin/p910nd","-d"]
 
 ARG VERSION
 LABEL \

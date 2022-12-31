@@ -131,7 +131,7 @@ jobs:
         done
 
     - name: Create and push shared manifest
-      #if: github.event_name == 'push'
+      if: github.event_name == 'push'
       env:
         DOCKER_USER: ${{ secrets.DOCKER_HUB_USERNAME }}
         ADDON: ${{ matrix.addons }}
@@ -152,7 +152,5 @@ jobs:
         echo "exit 0" >> push-shared-tags.sh
         cat push-shared-tags.sh
         chmod +x ./push-shared-tags.sh
-        if [[ "${GITHUB_EVENT_NAME}" == 'push' ]]; then
-          ./push-shared-tags.sh
-        fi
+        ./push-shared-tags.sh
         rm -rf ./push-shared-tags.sh

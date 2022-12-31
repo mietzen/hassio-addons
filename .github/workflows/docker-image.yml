@@ -61,7 +61,7 @@ jobs:
         curl https://omnitruck.chef.io/install.sh | sudo bash -s -- -P inspec
         inspec --chef-license=accept
 
-    - name: Build and Test
+    - name: Build
       id: build
       env:
         DOCKER_USER: ${{ secrets.DOCKER_HUB_USERNAME }}
@@ -87,6 +87,18 @@ jobs:
             --load \
             -f Dockerfile .
 
+    - name: Test
+      id: test
+      env:
+        DOCKER_USER: ${{ secrets.DOCKER_HUB_USERNAME }}
+        ADDON: ${{ matrix.addons }}
+        BUILD_NR: ${{ github.run_number }}
+        GITHUB_EVENT_NAME: ${{ github.event_name }}
+      working-directory: ./${{ matrix.addons }}
+      run: |
+        VERSION=$(yq -r .version config.yaml)
+        declare -a PLATFORMS=("linux/amd64" "linux/arm64" "linux/386" "linux/arm/v7" "linux/arm/v6")
+        for PLATFORM in "${PLATFORMS[@]}"; do
           echo ""
           echo "============================================================="
           echo "Setup Tests for: ${DOCKER_USER}/${ADDON}:${VERSION}-${ARCH}-${BUILD_NR}"
@@ -129,8 +141,8 @@ jobs:
       working-directory: ./${{ matrix.addons }}
       run: |
         VERSION=$(yq -r .version config.yaml)
-        declare -a PLATFORMS=("linux/arm64" "linux/amd64" "linux/386" "linux/arm/v7" "linux/arm/v6")
-
+        declare -a PLATFORMS=("linux/amd64" "linux/arm64" "linux/386" "linux/arm/v7" "linux/arm/v6")
+        
         echo "#!/bin/bash" > push-shared-tags.sh
         echo -n "docker manifest create ${DOCKER_USER}/${ADDON}:${VERSION}" >> push-shared-tags.sh
         for PLATFORM in "${PLATFORMS[@]}"; do

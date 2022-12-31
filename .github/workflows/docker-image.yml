@@ -54,7 +54,7 @@ jobs:
       id: buildx
       uses: docker/setup-buildx-action@v2
 
-    - name: Install yq
+    - name: Install Perquisites
       id: perquisite
       run: |
         sudo snap install yq
@@ -92,7 +92,7 @@ jobs:
           echo "Setup Tests for: ${DOCKER_USER}/${ADDON}:${VERSION}-${ARCH}-${BUILD_NR}"
           echo "============================================================="
           echo ""
-          docker run -d --platform ${PLATFORM} --rm --name ${ADDON} -v $(pwd)/test/resources/options.json:/data/options.json "${DOCKER_USER}/${ADDON}:${VERSION}-${ARCH}-${BUILD_NR}"
+          docker run --platform ${PLATFORM} --rm --name ${ADDON} -v $(pwd)/test/resources/options.json:/data/options.json "${DOCKER_USER}/${ADDON}:${VERSION}-${ARCH}-${BUILD_NR}"
           docker exec -u 0 ${ADDON} apt-get update
           docker exec -u 0 ${ADDON} apt-get install net-tools procps -y
 

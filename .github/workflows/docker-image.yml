@@ -73,11 +73,11 @@ jobs:
           ARCH=$(echo "${PLATFORM}" | awk -F  "/" '{print $2$3}')
           echo ""
           echo "============================================================="
-          echo "Building: ${DOCKER_USER}/${ADDON}:${VERSION}-${ARCH}-${BUILD_NR}"
+          echo "Building: ${DOCKER_USER}/hass-addon-${ADDON}:${VERSION}-${ARCH}-${BUILD_NR}"
           echo "============================================================="
           echo ""
           docker buildx build \
-            --tag "${DOCKER_USER}/${ADDON}:${VERSION}-${ARCH}-${BUILD_NR}" \
+            --tag "${DOCKER_USER}/hass-addon-${ADDON}:${VERSION}-${ARCH}-${BUILD_NR}" \
             --platform ${PLATFORM} \
             --build-arg "VERSION=${VERSION}" \
             --load \
@@ -98,16 +98,16 @@ jobs:
           ARCH=$(echo "${PLATFORM}" | awk -F  "/" '{print $2$3}')
           echo ""
           echo "============================================================="
-          echo "Setup Tests for: ${DOCKER_USER}/${ADDON}:${VERSION}-${ARCH}-${BUILD_NR}"
+          echo "Setup Tests for: ${DOCKER_USER}/hass-addon-${ADDON}:${VERSION}-${ARCH}-${BUILD_NR}"
           echo "============================================================="
           echo ""
-          docker run -d -e NO_SUPERVISOR=True --platform ${PLATFORM} --rm --name ${ADDON} -v $(pwd)/test/resources/options.json:/data/options.json "${DOCKER_USER}/${ADDON}:${VERSION}-${ARCH}-${BUILD_NR}"
+          docker run -d -e NO_SUPERVISOR=True --platform ${PLATFORM} --rm --name ${ADDON} -v $(pwd)/test/resources/options.json:/data/options.json "${DOCKER_USER}/hass-addon-${ADDON}:${VERSION}-${ARCH}-${BUILD_NR}"
           docker exec -u 0 ${ADDON} apt-get update
           docker exec -u 0 ${ADDON} apt-get install net-tools procps -y
 
           echo ""
           echo "============================================================="
-          echo "Testing: ${DOCKER_USER}/${ADDON}:${VERSION}-${ARCH}-${BUILD_NR}"
+          echo "Testing: ${DOCKER_USER}/hass-addon-${ADDON}:${VERSION}-${ARCH}-${BUILD_NR}"
           echo "============================================================="
           echo ""
           inspec exec ./test/integration -t docker://${ADDON}
@@ -117,12 +117,12 @@ jobs:
           if [[ "${GITHUB_EVENT_NAME}" == 'push' ]]; then
             echo ""
             echo "============================================================="
-            echo "Pushing: ${DOCKER_USER}/${ADDON}:${VERSION}-${ARCH}-${BUILD_NR}"
+            echo "Pushing: ${DOCKER_USER}/hass-addon-${ADDON}:${VERSION}-${ARCH}-${BUILD_NR}"
             echo "============================================================="
             echo ""
-            docker tag "${DOCKER_USER}/${ADDON}:${VERSION}-${ARCH}-${BUILD_NR}" "${DOCKER_USER}/${ADDON}:${VERSION}-${ARCH}"
-            docker push "${DOCKER_USER}/${ADDON}:${VERSION}-${ARCH}-${BUILD_NR}"
-            docker push "${DOCKER_USER}/${ADDON}:${VERSION}-${ARCH}"
+            docker tag "${DOCKER_USER}/hass-addon-${ADDON}:${VERSION}-${ARCH}-${BUILD_NR}" "${DOCKER_USER}/hass-addon-${ADDON}:${VERSION}-${ARCH}"
+            docker push "${DOCKER_USER}/hass-addon-${ADDON}:${VERSION}-${ARCH}-${BUILD_NR}"
+            docker push "${DOCKER_USER}/hass-addon-${ADDON}:${VERSION}-${ARCH}"
           else
             echo ""
             echo "Event: ${GITHUB_EVENT_NAME} != push"
@@ -142,13 +142,13 @@ jobs:
         declare -a PLATFORMS=("linux/amd64" "linux/arm64" "linux/386" "linux/arm/v7" "linux/arm/v6")
 
         echo "#!/bin/bash" > push-shared-tags.sh
-        echo -n "docker manifest create ${DOCKER_USER}/${ADDON}:${VERSION}" >> push-shared-tags.sh
+        echo -n "docker manifest create ${DOCKER_USER}/hass-addon-${ADDON}:${VERSION}" >> push-shared-tags.sh
         for PLATFORM in "${PLATFORMS[@]}"; do
           ARCH=$(echo "${PLATFORM}" | awk -F  "/" '{print $2$3}')
-          echo -n " ${DOCKER_USER}/${ADDON}:${VERSION}-${ARCH}-${BUILD_NR}" >> push-shared-tags.sh
+          echo -n " ${DOCKER_USER}/hass-addon-${ADDON}:${VERSION}-${ARCH}-${BUILD_NR}" >> push-shared-tags.sh
         done
         echo "" >> push-shared-tags.sh
-        echo "docker manifest push ${DOCKER_USER}/${ADDON}:${VERSION}" >> push-shared-tags.sh
+        echo "docker manifest push ${DOCKER_USER}/hass-addon-${ADDON}:${VERSION}" >> push-shared-tags.sh
         echo "exit 0" >> push-shared-tags.sh
         cat push-shared-tags.sh
         chmod +x ./push-shared-tags.sh

@@ -8,8 +8,10 @@ import os
 import yaml
 from dockerfile_parse import DockerfileParser
 
-cmd = 'skopeo --override-os linux inspect docker://debian'
+print('Starting Custom Dependabot')
 
+print('Scrapping all tags of debian docker image')
+cmd = 'skopeo --override-os linux inspect docker://debian'
 process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 stdout, stderr = process.communicate()
 if stderr:
@@ -19,6 +21,7 @@ if stderr:
 result = json.loads(stdout.decode('utf-8'))
 latest_image_date = max([int(x.split('-')[1]) for x in result['RepoTags'] if re.match(r"bullseye-[0-9]{8}-slim", x)])
 
+print('Start file walk...')
 cwd = os.getcwd()
 for dirpath, _, files in os.walk(cwd):
     for f in files:

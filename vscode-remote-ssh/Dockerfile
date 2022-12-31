@@ -19,7 +19,7 @@ RUN apt-get update && \
         python3 \
         python3-pip \
         rsync \
-        vi \
+        vim \
         wget \
         zsh \
     && \

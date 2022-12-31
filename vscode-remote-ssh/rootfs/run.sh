@@ -24,7 +24,7 @@ if [ -n "${NO_SUPERVISOR}" ]; then
     else
         echo "Error no ssh_keys found in ${CONFIG_PATH}" && exit 1
     fi
-    
+
     exec /usr/sbin/sshd -D
 else
     # Make root home persistent

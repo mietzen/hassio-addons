@@ -17,12 +17,20 @@ jobs:
         run: |
           python3 ./.github/resources/custom_dependabot
       - name: Commit changes
+        id: commit
         run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action Bot"
-          git commit -a -m "Updated base images"
+          if ! [ -z "$(git status --porcelain)" ]; then 
+            git config --local user.email "action@github.com"
+            git config --local user.name "GitHub Action Bot"
+            git commit -a -m "Updated base images"
+            echo "change=yes" >> $GITHUB_OUTPUT
+          else
+            echo "Nothing to commit!"
+            echo "change=no" >> $GITHUB_OUTPUT
+          fi
       - name: Create Pull Request
-        id: cpr
+        if: steps.commit.outputs.change == 'yes'
+        id: pr
         uses: peter-evans/create-pull-request@v4
         with:
           token: ${{ secrets.PUSH_TOKEN }}
@@ -33,9 +41,9 @@ jobs:
           labels: |
             automated pr
       - name: Automerge if possible
-        if: steps.cpr.outputs.pull-request-operation == 'created'
+        if: steps.commit.outputs.change == 'yes' && steps.pr.outputs.pull-request-operation == 'created'
         uses: peter-evans/enable-pull-request-automerge@v2
         with:
           token: ${{ secrets.PUSH_TOKEN }}
-          pull-request-number: ${{ steps.cpr.outputs.pull-request-number }}
+          pull-request-number: ${{ steps.pr.outputs.pull-request-number }}
           merge-method: squash

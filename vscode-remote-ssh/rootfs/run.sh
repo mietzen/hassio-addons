@@ -1,5 +1,5 @@
 #!/usr/bin/env bashio
-
+set +u
 if [ -n "${NO_SUPERVISOR}" ]; then
     # Make root home persistent
     if ! [ -d /data/root ]; then

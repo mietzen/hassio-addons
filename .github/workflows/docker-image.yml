@@ -51,18 +51,15 @@ jobs:
       uses: docker/setup-qemu-action@v2
 
     - name: Set up Docker Buildx
-      id: buildx
       uses: docker/setup-buildx-action@v2
 
     - name: Install Perquisites
-      id: perquisite
       run: |
         sudo snap install yq
         curl https://omnitruck.chef.io/install.sh | sudo bash -s -- -P inspec
         inspec --chef-license=accept
 
     - name: Build
-      id: build
       env:
         DOCKER_USER: ${{ secrets.DOCKER_HUB_USERNAME }}
         ADDON: ${{ matrix.addons }}
@@ -88,7 +85,6 @@ jobs:
         done
 
     - name: Test
-      id: test
       env:
         DOCKER_USER: ${{ secrets.DOCKER_HUB_USERNAME }}
         ADDON: ${{ matrix.addons }}
@@ -99,6 +95,7 @@ jobs:
         VERSION=$(yq -r .version config.yaml)
         declare -a PLATFORMS=("linux/amd64" "linux/arm64" "linux/386" "linux/arm/v7" "linux/arm/v6")
         for PLATFORM in "${PLATFORMS[@]}"; do
+          ARCH=$(echo "${PLATFORM}" | awk -F  "/" '{print $2$3}')
           echo ""
           echo "============================================================="
           echo "Setup Tests for: ${DOCKER_USER}/${ADDON}:${VERSION}-${ARCH}-${BUILD_NR}"
@@ -134,7 +131,7 @@ jobs:
         done
 
     - name: Create and push shared manifest
-      if: github.event_name == 'push'
+      #if: github.event_name == 'push'
       env:
         DOCKER_USER: ${{ secrets.DOCKER_HUB_USERNAME }}
         ADDON: ${{ matrix.addons }}
@@ -147,6 +144,7 @@ jobs:
         echo "#!/bin/bash" > push-shared-tags.sh
         echo -n "docker manifest create ${DOCKER_USER}/${ADDON}:${VERSION}" >> push-shared-tags.sh
         for PLATFORM in "${PLATFORMS[@]}"; do
+          ARCH=$(echo "${PLATFORM}" | awk -F  "/" '{print $2$3}')
           echo -n " ${DOCKER_USER}/${ADDON}:${VERSION}-${ARCH}-${BUILD_NR}" >> push-shared-tags.sh
         done
         echo "" >> push-shared-tags.sh
@@ -154,5 +152,7 @@ jobs:
         echo "exit 0" >> push-shared-tags.sh
         cat push-shared-tags.sh
         chmod +x ./push-shared-tags.sh
-        ./push-shared-tags.sh
+        if [[ "${GITHUB_EVENT_NAME}" == 'push' ]]; then
+          ./push-shared-tags.sh
+        fi
         rm -rf ./push-shared-tags.sh

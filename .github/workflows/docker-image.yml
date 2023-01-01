@@ -142,6 +142,9 @@ jobs:
       matrix:
         ${{ insert }}: ${{ fromJson(needs.Setup.outputs.push_matrix) }}
     steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
     - name: Create and push shared manifest
       env:
         DOCKER_USER: ${{ secrets.DOCKER_HUB_USERNAME }}

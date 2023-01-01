@@ -163,7 +163,7 @@ jobs:
         while read -r PLATFORM; do
           ARCH=$(echo "${PLATFORM}" | awk -F  "/" '{print $2$3}')
           echo -n " ${DOCKER_USER}/hass-addon-${ADDON}:${VERSION}-${ARCH}-${BUILD_NR}" >> push-shared-tags.sh
-        done <<< "$(cat .github/resources/platforms.json | jq -r '.platforms | join("\n")')"
+        done <<< "$(cat ../.github/resources/platforms.json | jq -r '.platforms | join("\n")')"
         echo "" >> push-shared-tags.sh
         echo "docker manifest push ${DOCKER_USER}/hass-addon-${ADDON}:${VERSION}" >> push-shared-tags.sh
         echo "exit 0" >> push-shared-tags.sh

@@ -29,8 +29,8 @@ jobs:
         fi
 
         git --no-pager diff HEAD HEAD~1 --name-only | grep -v -E '^\.' | cut -d'/' -f1 | uniq | xargs echo -n | jq -Rsc 'split(" ") | { "addons": (.) }' > .github/resources/addons.json
-        build_matrix=$(jq -s '.[0] * .[1]' .github/resources/addons.json .github/resources/platforms.json)
-        echo "build_matrixx=${build_matrix}" >> $GITHUB_OUTPUT
+        build_matrix=$(jq -sc '.[0] * .[1]' .github/resources/addons.json .github/resources/platforms.json)
+        echo "build_matrix=${build_matrix}" >> $GITHUB_OUTPUT
         echo "push_matrix=$(cat .github/resources/addons.json)" >> $GITHUB_OUTPUT
 
   Build:

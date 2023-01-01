@@ -7,6 +7,7 @@ docker run -d --rm \
     -v $(pwd)/test/resources/bashio-mok:/usr/lib/bashio/bashio.sh \
     "${DOCKER_USER}/hass-addon-${ADDON}:${VERSION}-${ARCH}-${BUILD_NR}"
 
+# Install tools needed for inspect
 docker exec -u 0 ${ADDON} apt-get update
 docker exec -u 0 ${ADDON} apt-get install net-tools procps -y
 

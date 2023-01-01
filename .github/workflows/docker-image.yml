@@ -8,35 +8,39 @@ on:
   workflow_dispatch:
 
 jobs:
-  Matrix:
+  Setup:
     runs-on: ubuntu-latest
     outputs:
       build: ${{ steps.set-matrix.outputs.build }}
-      built_matrix: ${{ steps.set-matrix.outputs.matrix }}
+      build_matrix: ${{ steps.set-matrix.outputs.build_matrix }}
+      push_matrix: ${{ steps.set-matrix.outputs.push_matrix }}
     steps:
     - name: Checkout
       uses: actions/checkout@v3
       with:
         fetch-depth: 0
-    - name: Build Matrix all addons
+    - name: Setup Matrix-Jobs
       id: set-matrix
       run: |
-        if [ $(git --no-pager diff HEAD HEAD~1 --name-only | grep -v -E '^\.' | cut -d'/' -f1 | uniq) ]; then
+        if [ $(git --no-pager diff HEAD HEAD~1 --name-only | grep -v -E '^\.' | cut -d'/' -f1 | uniq | wc -l | xargs) -gt 0 ]; then
           echo "build=yes" >> $GITHUB_OUTPUT
         else
           echo "build=no" >> $GITHUB_OUTPUT
         fi
-        output=$(git --no-pager diff HEAD HEAD~1 --name-only | grep -v -E '^\.' | cut -d'/' -f1 | uniq | xargs echo -n | jq -Rsc 'split(" ") | { "addons": (.) }')
-        echo "matrix=${output}" >> $GITHUB_OUTPUT
+
+        git --no-pager diff HEAD HEAD~1 --name-only | grep -v -E '^\.' | cut -d'/' -f1 | uniq | xargs echo -n | jq -Rsc 'split(" ") | { "addons": (.) }' > .github/resources/addons.json
+        build_matrix=$(jq -sc '.[0] * .[1]' .github/resources/addons.json .github/resources/platforms.json)
+        echo "build_matrix=${build_matrix}" >> $GITHUB_OUTPUT
+        echo "push_matrix=$(cat .github/resources/addons.json)" >> $GITHUB_OUTPUT
 
   Build:
     runs-on: ubuntu-latest
-    needs: Matrix
-    if: needs.Matrix.outputs.build == 'yes'
+    needs: Setup
+    if: needs.Setup.outputs.build == 'yes'
     strategy:
       fail-fast: false
       matrix:
-        ${{ insert }}: ${{ fromJson(needs.Matrix.outputs.built_matrix) }}
+        ${{ insert }}: ${{ fromJson(needs.Setup.outputs.build_matrix) }}
     steps:
     - name: Checkout
       uses: actions/checkout@v3
@@ -65,73 +69,80 @@ jobs:
         ADDON: ${{ matrix.addons }}
         BUILD_NR: ${{ github.run_number }}
         GITHUB_EVENT_NAME: ${{ github.event_name }}
+        PLATFORM: ${{ matrix.platforms }}
       working-directory: ./${{ matrix.addons }}
       run: |
+        ARCH=$(echo "${PLATFORM}" | awk -F  "/" '{print $2$3}')
         VERSION=$(yq -r .version config.yaml)
-        declare -a PLATFORMS=("linux/amd64" "linux/arm64" "linux/386" "linux/arm/v7" "linux/arm/v6")
-        for PLATFORM in "${PLATFORMS[@]}"; do
-          ARCH=$(echo "${PLATFORM}" | awk -F  "/" '{print $2$3}')
-          echo ""
-          echo "============================================================="
-          echo "Building: ${DOCKER_USER}/hass-addon-${ADDON}:${VERSION}-${ARCH}-${BUILD_NR}"
-          echo "============================================================="
-          echo ""
-          docker buildx build \
-            --tag "${DOCKER_USER}/hass-addon-${ADDON}:${VERSION}-${ARCH}-${BUILD_NR}" \
-            --platform ${PLATFORM} \
-            --build-arg "VERSION=${VERSION}" \
-            --load \
-            -f Dockerfile .
-        done
+        echo ""
+        echo "============================================================="
+        echo "Building: ${DOCKER_USER}/hass-addon-${ADDON}:${VERSION}-${ARCH}-${BUILD_NR}"
+        echo "============================================================="
+        echo ""
+        docker buildx build \
+          --tag "${DOCKER_USER}/hass-addon-${ADDON}:${VERSION}-${ARCH}-${BUILD_NR}" \
+          --platform ${PLATFORM} \
+          --build-arg "VERSION=${VERSION}" \
+          --load \
+          -f Dockerfile .
 
     - name: Test
       env:
         DOCKER_USER: ${{ secrets.DOCKER_HUB_USERNAME }}
         ADDON: ${{ matrix.addons }}
         BUILD_NR: ${{ github.run_number }}
-        GITHUB_EVENT_NAME: ${{ github.event_name }}
+        PLATFORM: ${{ matrix.platforms }}
       working-directory: ./${{ matrix.addons }}
       run: |
+        ARCH=$(echo "${PLATFORM}" | awk -F  "/" '{print $2$3}')
         VERSION=$(yq -r .version config.yaml)
-        declare -a PLATFORMS=("linux/amd64" "linux/arm64" "linux/386" "linux/arm/v7" "linux/arm/v6")
-        for PLATFORM in "${PLATFORMS[@]}"; do
-          ARCH=$(echo "${PLATFORM}" | awk -F  "/" '{print $2$3}')
-          echo ""
-          echo "============================================================="
-          echo "Setup Tests for: ${DOCKER_USER}/hass-addon-${ADDON}:${VERSION}-${ARCH}-${BUILD_NR}"
-          echo "============================================================="
-          echo ""
-          docker run -d -e NO_SUPERVISOR=True --platform ${PLATFORM} --rm --name ${ADDON} -v $(pwd)/test/resources/options.json:/data/options.json "${DOCKER_USER}/hass-addon-${ADDON}:${VERSION}-${ARCH}-${BUILD_NR}"
-          docker exec -u 0 ${ADDON} apt-get update
-          docker exec -u 0 ${ADDON} apt-get install net-tools procps -y
+        echo ""
+        echo "============================================================="
+        echo "Setup Tests for: ${DOCKER_USER}/hass-addon-${ADDON}:${VERSION}-${ARCH}-${BUILD_NR}"
+        echo "============================================================="
+        echo ""
+        exec ./test/setup.sh
+        echo ""
+        echo "============================================================="
+        echo "Testing: ${DOCKER_USER}/hass-addon-${ADDON}:${VERSION}-${ARCH}-${BUILD_NR}"
+        echo "============================================================="
+        echo ""
+        inspec exec ./test/integration -t docker://${ADDON}
+        echo "Teardown"
+        docker container stop ${ADDON}
 
-          echo ""
-          echo "============================================================="
-          echo "Testing: ${DOCKER_USER}/hass-addon-${ADDON}:${VERSION}-${ARCH}-${BUILD_NR}"
-          echo "============================================================="
-          echo ""
-          inspec exec ./test/integration -t docker://${ADDON}
-          echo "Teardown"
-          docker container stop ${ADDON}
-
-          if [[ "${GITHUB_EVENT_NAME}" == 'push' ]]; then
-            echo ""
-            echo "============================================================="
-            echo "Pushing: ${DOCKER_USER}/hass-addon-${ADDON}:${VERSION}-${ARCH}-${BUILD_NR}"
-            echo "============================================================="
-            echo ""
-            docker tag "${DOCKER_USER}/hass-addon-${ADDON}:${VERSION}-${ARCH}-${BUILD_NR}" "${DOCKER_USER}/hass-addon-${ADDON}:${VERSION}-${ARCH}"
-            docker push "${DOCKER_USER}/hass-addon-${ADDON}:${VERSION}-${ARCH}-${BUILD_NR}"
-            docker push "${DOCKER_USER}/hass-addon-${ADDON}:${VERSION}-${ARCH}"
-          else
-            echo ""
-            echo "Event: ${GITHUB_EVENT_NAME} != push"
-            echo "Omitting push to DockerHub"
-          fi
-        done
-
-    - name: Create and push shared manifest
+    - name: Push Images
       if: github.event_name == 'push'
+      env:
+        DOCKER_USER: ${{ secrets.DOCKER_HUB_USERNAME }}
+        ADDON: ${{ matrix.addons }}
+        BUILD_NR: ${{ github.run_number }}
+        PLATFORM: ${{ matrix.platforms }}
+      working-directory: ./${{ matrix.addons }}
+      run: |
+        ARCH=$(echo "${PLATFORM}" | awk -F  "/" '{print $2$3}')
+        VERSION=$(yq -r .version config.yaml)
+        echo ""
+        echo "============================================================="
+        echo "Pushing: ${DOCKER_USER}/hass-addon-${ADDON}:${VERSION}-${ARCH}-${BUILD_NR}"
+        echo "============================================================="
+        echo ""
+        docker tag "${DOCKER_USER}/hass-addon-${ADDON}:${VERSION}-${ARCH}-${BUILD_NR}" "${DOCKER_USER}/hass-addon-${ADDON}:${VERSION}-${ARCH}"
+        docker push "${DOCKER_USER}/hass-addon-${ADDON}:${VERSION}-${ARCH}-${BUILD_NR}"
+        docker push "${DOCKER_USER}/hass-addon-${ADDON}:${VERSION}-${ARCH}"
+
+  Shared-Manifest:
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    needs: 
+      - Build
+      - Setup
+    strategy:
+      fail-fast: false
+      matrix:
+        ${{ insert }}: ${{ fromJson(needs.Setup.outputs.push_matrix) }}
+    steps:
+    - name: Create and push shared manifest
       env:
         DOCKER_USER: ${{ secrets.DOCKER_HUB_USERNAME }}
         ADDON: ${{ matrix.addons }}
@@ -139,26 +150,30 @@ jobs:
       working-directory: ./${{ matrix.addons }}
       run: |
         VERSION=$(yq -r .version config.yaml)
-        declare -a PLATFORMS=("linux/amd64" "linux/arm64" "linux/386" "linux/arm/v7" "linux/arm/v6")
-
+        echo ""
+        echo "============================================================="
+        echo "Pushing shared manifest: ${DOCKER_USER}/hass-addon-${ADDON}:${VERSION}"
+        echo "============================================================="
+        echo ""
         echo "#!/bin/bash" > push-shared-tags.sh
         echo -n "docker manifest create ${DOCKER_USER}/hass-addon-${ADDON}:${VERSION}" >> push-shared-tags.sh
-        for PLATFORM in "${PLATFORMS[@]}"; do
+        while read -r PLATFORM; do
           ARCH=$(echo "${PLATFORM}" | awk -F  "/" '{print $2$3}')
           echo -n " ${DOCKER_USER}/hass-addon-${ADDON}:${VERSION}-${ARCH}-${BUILD_NR}" >> push-shared-tags.sh
-        done
+        done <<< "$(cat .github/resources/platforms.json | jq -r '.platforms | join("\n")')"
         echo "" >> push-shared-tags.sh
         echo "docker manifest push ${DOCKER_USER}/hass-addon-${ADDON}:${VERSION}" >> push-shared-tags.sh
         echo "exit 0" >> push-shared-tags.sh
         cat push-shared-tags.sh
         chmod +x ./push-shared-tags.sh
         ./push-shared-tags.sh
-        rm -rf ./push-shared-tags.sh
 
   Check-Build:
     if: ${{ always() }}
     runs-on: ubuntu-latest
-    needs: Build
+    needs: 
+      - Build
+      - Shared-Manifest
     steps:
       - run: |
           result="${{ needs.Build.result }}"

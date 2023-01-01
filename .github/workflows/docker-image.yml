@@ -31,7 +31,7 @@ jobs:
         git --no-pager diff HEAD HEAD~1 --name-only | grep -v -E '^\.' | cut -d'/' -f1 | uniq | xargs echo -n | jq -Rsc 'split(" ") | { "addons": (.) }' > .github/resources/addons.json
         build_matrix=$(jq -s '.[0] * .[1]' .github/resources/addons.json .github/resources/platforms.json)
         echo "build_matrixx=${build_matrix}" >> $GITHUB_OUTPUT
-        echo "push_matrix=$(cat addons.json)" >> $GITHUB_OUTPUT
+        echo "push_matrix=$(cat .github/resources/addons.json)" >> $GITHUB_OUTPUT
 
   Build:
     runs-on: ubuntu-latest
@@ -131,7 +131,7 @@ jobs:
         docker push "${DOCKER_USER}/hass-addon-${ADDON}:${VERSION}-${ARCH}-${BUILD_NR}"
         docker push "${DOCKER_USER}/hass-addon-${ADDON}:${VERSION}-${ARCH}"
 
-  Create-and-push-shared-manifest:
+  Shared-Manifest:
     if: github.event_name == 'push'
     runs-on: ubuntu-latest
     needs: 
@@ -171,7 +171,9 @@ jobs:
   Check-Build:
     if: ${{ always() }}
     runs-on: ubuntu-latest
-    needs: Build
+    needs: 
+      - Build
+      - Shared-Manifest
     steps:
       - run: |
           result="${{ needs.Build.result }}"

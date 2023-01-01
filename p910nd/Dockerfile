@@ -6,6 +6,7 @@ RUN apt-get update && \
     rm -rf /tmp/* /var/{cache,log}/* /var/lib/apt/lists/*
 
 RUN mkdir -p /var/lock/p910nd && touch /var/lock/p910nd/p9100d
+
 # Run p910nd
 CMD ["/usr/sbin/p910nd","-d"]
 

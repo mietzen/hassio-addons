@@ -54,7 +54,7 @@ RUN case $(uname -m) in \
     wget -O /usr/bin/ha "https://github.com/home-assistant/cli/releases/download/${HA_CLI_VERSION}/ha_${dl_arch}" && \
     chmod a+x /usr/bin/ha
 
-# Run script
+# Start Server
 CMD [ "/run.sh" ]
 
 ARG VERSION

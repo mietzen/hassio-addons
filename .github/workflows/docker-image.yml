@@ -22,7 +22,7 @@ jobs:
     - name: Setup Matrix-Jobs
       id: set-matrix
       run: |
-        if [ $(git --no-pager diff HEAD HEAD~1 --name-only | grep -v -E '^\.' | cut -d'/' -f1 | uniq) ]; then
+        if [ $(git --no-pager diff HEAD HEAD~1 --name-only | grep -v -E '^\.' | cut -d'/' -f1 | uniq | wc -l | xargs) -gt 0 ]; then
           echo "build=yes" >> $GITHUB_OUTPUT
         else
           echo "build=no" >> $GITHUB_OUTPUT

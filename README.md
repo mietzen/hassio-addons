@@ -10,7 +10,8 @@ https://github.com/mietzen/hassio-addons
 ```
 
 ## Add-ons in this repository
- - **[Visual Studio Code Remote SSH Server](/vscode-remote-ssh/README.md)**: Create snapshots and store them on a Samba share.
+ - **[Visual Studio Code Remote SSH Server](/vscode-remote-ssh/README.md)**
+ - **[P910nd](/p1´910nd/README.md)**
 
 ## Credits:
 Thanks to [Tom](https://github.com/thomasmauerer), from whom I copied the repo structure and README's as templates!

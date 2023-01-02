@@ -37,7 +37,7 @@ jobs:
 
         if ! [[ ${GITHUB_EVENT_NAME} == 'workflow_dispatch' ]]; then
           git --no-pager diff HEAD HEAD~1 --name-only | grep -v -E '^\.' | grep -E '\/' | cut -d'/' -f1 | uniq | xargs echo -n | jq -Rsc 'split(" ") | { "addons": (.) }' > .github/resources/addons.json
-        else:
+        else
           ls -d */ | cut -d'/' -f1 | uniq | xargs echo -n | jq -Rsc 'split(" ") | { "addons": (.) }' > .github/resources/addons.json
         fi
         build_matrix=$(jq -sc '.[0] * .[1]' .github/resources/addons.json .github/resources/platforms.json)

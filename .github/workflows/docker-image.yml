@@ -21,14 +21,25 @@ jobs:
         fetch-depth: 0
     - name: Setup Matrix-Jobs
       id: set-matrix
+      env:
+        GITHUB_EVENT_NAME: ${{ github.event_name }}
       run: |
+        echo "Run triggered by: ${GITHUB_EVENT_NAME}"
         if [ $(git --no-pager diff HEAD HEAD~1 --name-only | grep -v -E '^\.' | cut -d'/' -f1 | uniq | wc -l | xargs) -gt 0 ]; then
           echo "build=yes" >> $GITHUB_OUTPUT
         else
-          echo "build=no" >> $GITHUB_OUTPUT
+          if [[ ${GITHUB_EVENT_NAME} == 'workflow_dispatch' ]]; then
+            echo "build=yes" >> $GITHUB_OUTPUT
+          else
+            echo "build=no" >> $GITHUB_OUTPUT
+          fi
         fi
 
-        git --no-pager diff HEAD HEAD~1 --name-only | grep -v -E '^\.' | grep -E '\/' | cut -d'/' -f1 | uniq | xargs echo -n | jq -Rsc 'split(" ") | { "addons": (.) }' > .github/resources/addons.json
+        if ! [[ ${GITHUB_EVENT_NAME} == 'workflow_dispatch' ]]; then
+          git --no-pager diff HEAD HEAD~1 --name-only | grep -v -E '^\.' | grep -E '\/' | cut -d'/' -f1 | uniq | xargs echo -n | jq -Rsc 'split(" ") | { "addons": (.) }' > .github/resources/addons.json
+        else:
+          ls -d */ | cut -d'/' -f1 | uniq | xargs echo -n | jq -Rsc 'split(" ") | { "addons": (.) }' > .github/resources/addons.json
+        fi
         build_matrix=$(jq -sc '.[0] * .[1]' .github/resources/addons.json .github/resources/platforms.json)
         echo "build_matrix=${build_matrix}" >> $GITHUB_OUTPUT
         echo "push_matrix=$(cat .github/resources/addons.json)" >> $GITHUB_OUTPUT
@@ -68,7 +79,6 @@ jobs:
         DOCKER_USER: ${{ secrets.DOCKER_HUB_USERNAME }}
         ADDON: ${{ matrix.addons }}
         BUILD_NR: ${{ github.run_number }}
-        GITHUB_EVENT_NAME: ${{ github.event_name }}
         PLATFORM: ${{ matrix.platforms }}
       working-directory: ./${{ matrix.addons }}
       run: |

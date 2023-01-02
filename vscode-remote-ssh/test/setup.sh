@@ -6,7 +6,8 @@ docker run -d --rm \
     --name ${ADDON} \
     --platform ${PLATFORM} \
     -v $(pwd)/test/resources/options.json:/data/options.json \
-    -v $(pwd)/test/resources/bashio-mok:/usr/lib/bashio/bashio.sh \
+    -v $(pwd)/test/resources/bashio.sh.mok:/usr/lib/bashio/bashio.sh \
+    -v $(pwd)/test/resources/bashio-config.sh.mok:/usr/lib/bashio/config.sh \
     "${DOCKER_USER}/hass-addon-${ADDON}:${VERSION}-${ARCH}-${BUILD_NR}"
 
 # Install tools needed for inspect

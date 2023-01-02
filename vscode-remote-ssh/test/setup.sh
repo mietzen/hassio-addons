@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -xe
+
 docker run -d --rm \
     --name ${ADDON} \
     --platform ${PLATFORM} \

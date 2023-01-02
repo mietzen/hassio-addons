@@ -1,3 +1,5 @@
+## **Status: Stable ✓**
+
 # Home Assistant Add-on: Visual Studio Code Remote SSH Server
 
 Enables you to connect to Home Assistant via Visual Studio Code Remote SSH.
@@ -17,8 +19,17 @@ This add-on lets you use Visual Studio Code Remote SSH to edit your Home Assista
 
 _Example configuration_:
 
+Addon:
 ```yaml
 ssh_keys: ["ssh-rsa yourverylongsshkey", "ssh-ed25519 andanotherone"]
+```
+
+VS-Code ssh config ($HOME/.ssh/config):
+```
+Host home-assistant-vscode-ssh
+   HostName <YOUR-HOME-ASSISTANT_IP>
+   Port 22000
+   User root
 ```
 
 **Note**: _This is just an example, don't copy and paste it! Create your own!_

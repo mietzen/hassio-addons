@@ -1,3 +1,5 @@
+## **Status: Untested Beta ×**
+
 # Home Assistant Add-on: p910nd
 
 Enables you to connect a printer to Home Assistant.

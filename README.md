@@ -10,8 +10,8 @@ https://github.com/mietzen/hassio-addons
 ```
 
 ## Add-ons in this repository
- - **[Visual Studio Code Remote SSH Server](/vscode-remote-ssh/README.md)**
- - **[P910nd](/p1´910nd/README.md)**
+ - **[Visual Studio Code Remote SSH Server](https://github.com/mietzen/hassio-addons/tree/main/vscode-remote-ssh)**
+ - **[P910nd](https://github.com/mietzen/hassio-addons/tree/main/p910nd)**
 
 ## Credits:
 Thanks to [Tom](https://github.com/thomasmauerer), from whom I copied the repo structure and README's as templates!

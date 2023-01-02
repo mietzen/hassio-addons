@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env bash -xe
 
 docker run -d --rm \
     --name ${ADDON} \
@@ -10,5 +10,3 @@ docker run -d --rm \
 # Install tools needed for inspect
 docker exec -u 0 ${ADDON} apt-get update
 docker exec -u 0 ${ADDON} apt-get install net-tools procps -y
-
-exit 0

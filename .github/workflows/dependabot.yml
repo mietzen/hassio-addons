@@ -33,13 +33,17 @@ jobs:
         id: pr
         uses: peter-evans/create-pull-request@v4
         with:
+          commit-message: Update report
+          committer: GitHub Action Bot <action@github.com>
+          author: GitHub Action Bot <action@github.com>
           token: ${{ secrets.PUSH_TOKEN }}
+          branch: dependabot-update-base-images
           delete-branch: true
           title: '[Dependabot] Updated base images'
           assignees: mietzen
-          reviewers: mietzen
           labels: |
             automated pr
+            dependabot
       - name: Automerge if possible
         if: steps.commit.outputs.change == 'yes' && steps.pr.outputs.pull-request-operation == 'created'
         uses: peter-evans/enable-pull-request-automerge@v2

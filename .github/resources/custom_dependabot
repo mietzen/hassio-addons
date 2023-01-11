@@ -45,12 +45,13 @@ for dirpath, _, files in os.walk(cwd):
                 if os.path.exists(config_file):
                     with open(config_file, "r") as stream:
                         config = yaml.safe_load(stream)
-                    version = config['version'].split('.')
+                    old_addon_version = config['version']
+                    version = old_addon_version.split('.')
                     config['version'] = '.'.join([version[0], version[1], str(int(version[2]) + 1)])
                     new_addon_version = config['version']
                     with open(config_file, "w") as stream:
                         yaml.safe_dump(config, stream, sort_keys=False)
-                    print('Bumped version from: ' + version + ' to: ' + new_addon_version)
+                    print('Bumped version from: ' + old_addon_version + ' to: ' + new_addon_version)
                 else:
                     print('config.yaml not found')
                 # Append CHANGELOG.md

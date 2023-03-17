@@ -25,8 +25,18 @@ jobs:
         GITHUB_EVENT_NAME: ${{ github.event_name }}
       run: |
         echo "Run triggered by: ${GITHUB_EVENT_NAME}"
-        if [ $(git --no-pager diff HEAD HEAD~1 --name-only | grep -v -E '^\.' | cut -d'/' -f1 | uniq | wc -l | xargs) -gt 0 ]; then
-          echo "build=yes" >> $GITHUB_OUTPUT
+        CHANGED_FILES=$(git --no-pager diff HEAD HEAD~1 --name-only | grep -v -E '^\.' | cut -d'/' -f1 | uniq)
+        echo "Changed files:"
+        echo "$CHANGED_FILES"
+        if [ $(echo $CHANGED_FILES | wc -l | xargs) -gt 0 ]; then
+          BUILD="no"
+          for i in $(echo $CHANGED_FILES); do
+            echo "Checking $i"
+            if [[ -d $i ]]; then
+              BUILD="yes"
+            fi
+          done
+          echo "build=$BUILD" >> $GITHUB_OUTPUT
         else
           if [[ ${GITHUB_EVENT_NAME} == 'workflow_dispatch' ]]; then
             echo "build=yes" >> $GITHUB_OUTPUT

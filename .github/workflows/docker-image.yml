@@ -26,23 +26,17 @@ jobs:
       run: |
         echo "Run triggered by: ${GITHUB_EVENT_NAME}"
         if [ $(git --no-pager diff HEAD HEAD~1 --name-only | grep -v -E '^\.' | cut -d'/' -f1 | uniq | wc -l | xargs) -gt 0 ]; then
+          git --no-pager diff HEAD HEAD~1 --name-only | grep -v -E '^\.' | grep -E '\/' | cut -d'/' -f1 | uniq | xargs echo -n | jq -Rsc 'split(" ") | { "addons": (.) }' > .github/resources/addons.json      
           echo "build=yes" >> $GITHUB_OUTPUT
         else
-          if [[ ${GITHUB_EVENT_NAME} == 'workflow_dispatch' ]]; then
+          if [[ ${GITHUB_EVENT_NAME} == 'workflow_dispatch' || ${GITHUB_EVENT_NAME} == 'pull_request' ]]; then
             echo "build=yes" >> $GITHUB_OUTPUT
-          fi
-          if [[ ${GITHUB_EVENT_NAME} == 'pull_request' ]]; then
-            echo "build=yes" >> $GITHUB_OUTPUT
+            ls -d */ | cut -d'/' -f1 | uniq | xargs echo -n | jq -Rsc 'split(" ") | { "addons": (.) }' > .github/resources/addons.json
           else
             echo "build=no" >> $GITHUB_OUTPUT
           fi
         fi
 
-        if ! [[ ${GITHUB_EVENT_NAME} == 'workflow_dispatch' ]]; then
-          git --no-pager diff HEAD HEAD~1 --name-only | grep -v -E '^\.' | grep -E '\/' | cut -d'/' -f1 | uniq | xargs echo -n | jq -Rsc 'split(" ") | { "addons": (.) }' > .github/resources/addons.json
-        else
-          ls -d */ | cut -d'/' -f1 | uniq | xargs echo -n | jq -Rsc 'split(" ") | { "addons": (.) }' > .github/resources/addons.json
-        fi
         build_matrix=$(jq -sc '.[0] * .[1]' .github/resources/addons.json .github/resources/platforms.json)
         echo "build_matrix=${build_matrix}" >> $GITHUB_OUTPUT
         echo "push_matrix=$(cat .github/resources/addons.json)" >> $GITHUB_OUTPUT

@@ -30,6 +30,9 @@ jobs:
         else
           if [[ ${GITHUB_EVENT_NAME} == 'workflow_dispatch' ]]; then
             echo "build=yes" >> $GITHUB_OUTPUT
+          fi
+          if [[ ${GITHUB_EVENT_NAME} == 'pull_request' ]]; then
+            echo "build=yes" >> $GITHUB_OUTPUT
           else
             echo "build=no" >> $GITHUB_OUTPUT
           fi
@@ -187,11 +190,19 @@ jobs:
     needs: 
       - Build
       - Shared-Manifest
+      - Setup
     steps:
       - run: |
-          result="${{ needs.Build.result }}"
-          if [[ $result == "success" || $result == "skipped" ]]; then
-            exit 0
+          if [[ "${{ needs.Setup.outputs.build }}" == 'yes' ]]; then
+            result="${{ needs.Build.result }}"
+            if [[ $result == "success" || $result == "skipped" ]]; then
+              echo "Build successfull!"
+              exit 0
+            else
+              echo "Build failed!"
+              exit 1
+            fi
           else
+            echo "Did not build!"
             exit 1
           fi

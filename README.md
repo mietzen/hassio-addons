@@ -15,3 +15,7 @@ https://github.com/mietzen/hassio-addons
 
 ## Credits:
 Thanks to [Tom](https://github.com/thomasmauerer), from whom I copied the repo structure and README's as templates!
+
+## Disclaimer
+
+**All trademarks, logos and brand names are the property of their respective owners. All company, product and service names used in this package are for identification purposes only. Use of these names,trademarks and brands does not imply endorsement.**

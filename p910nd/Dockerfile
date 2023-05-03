@@ -1,4 +1,4 @@
-FROM debian:bullseye-20230411-slim
+FROM debian:bullseye-20230502-slim
 
 # Install prerequisites
 RUN apt-get update && \

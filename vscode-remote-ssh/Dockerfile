@@ -1,4 +1,4 @@
-FROM debian:bullseye-20230703-slim
+FROM debian:bullseye-20230725-slim
 
 ENV LANG C.UTF-8
 

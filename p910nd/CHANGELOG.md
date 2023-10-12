@@ -1,4 +1,6 @@
 # Changelog:
+## Version 0.1.15
+- Updated base image to debian:bullseye-20231009-slim
 ## Version 0.1.14
 - Updated base image to debian:bullseye-20230919-slim
 ## Version 0.1.13

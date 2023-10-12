@@ -1,5 +1,5 @@
 name: p910nd
-version: 0.1.14
+version: 0.1.15
 slug: p910nd
 description: Enables you to connect a printer to Home Assistant.
 url: https://github.com/mietzen/hassio-addons/tree/master/p910nd

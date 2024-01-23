@@ -1,4 +1,6 @@
 # Changelog:
+## Version 1.0.20
+- Added configuration to allow access to addons folders
 ## Version 1.0.19
 - Updated base image to debian:bullseye-20240110-slim
 ## Version 1.0.18

@@ -28,15 +28,21 @@ jobs:
             echo "Nothing to commit!"
             echo "change=no" >> $GITHUB_OUTPUT
           fi
+      - uses: tibdex/github-app-token@v2
+        if: steps.commit.outputs.change == 'yes'
+        id: generate-token
+        with:
+          app_id: ${{ secrets.APP_ID }}
+          private_key: ${{ secrets.APP_PRIVATE_KEY }}  
       - name: Create Pull Request
         if: steps.commit.outputs.change == 'yes'
         id: pr
         uses: peter-evans/create-pull-request@v6
         with:
           commit-message: Update report
-          committer: GitHub Action Bot <action@github.com>
-          author: GitHub Action Bot <action@github.com>
-          token: ${{ secrets.PUSH_TOKEN }}
+          committer: merger-bot[bot] <131801252+merger-bot[bot]@users.noreply.github.com>
+          author: merger-bot[bot] <131801252+merger-bot[bot]@users.noreply.github.com>
+          token: ${{ steps.generate-token.outputs.token }}
           branch: dependabot-update-base-images
           delete-branch: true
           title: '[Dependabot] Updated base images'
@@ -48,6 +54,6 @@ jobs:
         if: steps.commit.outputs.change == 'yes' && steps.pr.outputs.pull-request-operation == 'created'
         uses: peter-evans/enable-pull-request-automerge@v3
         with:
-          token: ${{ secrets.PUSH_TOKEN }}
+          token: ${{ steps.generate-token.outputs.token }}
           pull-request-number: ${{ steps.pr.outputs.pull-request-number }}
           merge-method: squash

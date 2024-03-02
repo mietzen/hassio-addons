@@ -9,7 +9,7 @@ jobs:
   Dependabot:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Install perquisite
         run: |
           pip3 install dockerfile-parse
@@ -46,7 +46,7 @@ jobs:
             dependabot
       - name: Automerge if possible
         if: steps.commit.outputs.change == 'yes' && steps.pr.outputs.pull-request-operation == 'created'
-        uses: peter-evans/enable-pull-request-automerge@v2
+        uses: peter-evans/enable-pull-request-automerge@v3
         with:
           token: ${{ secrets.PUSH_TOKEN }}
           pull-request-number: ${{ steps.pr.outputs.pull-request-number }}

@@ -1,6 +1,6 @@
-name: Custom Dependabot 
+name: Custom Dependabot
 # Update Docker Base Images, append changelogs and bump addon patch version
-on: 
+on:
   schedule:
     - cron: "0 14 * * *"
   workflow_dispatch:
@@ -19,7 +19,7 @@ jobs:
       - name: Commit changes
         id: commit
         run: |
-          if ! [ -z "$(git status --porcelain)" ]; then 
+          if ! [ -z "$(git status --porcelain)" ]; then
             git config --local user.email "action@github.com"
             git config --local user.name "GitHub Action Bot"
             git commit -a -m "Updated base images"
@@ -28,12 +28,12 @@ jobs:
             echo "Nothing to commit!"
             echo "change=no" >> $GITHUB_OUTPUT
           fi
-      - uses: tibdex/github-app-token@v2
+      - uses: actions/create-github-app-token@v1
         if: steps.commit.outputs.change == 'yes'
         id: generate-token
         with:
-          app_id: ${{ secrets.APP_ID }}
-          private_key: ${{ secrets.APP_PRIVATE_KEY }}  
+          app-id: ${{ secrets.APP_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
       - name: Create Pull Request
         if: steps.commit.outputs.change == 'yes'
         id: pr

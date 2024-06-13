@@ -1,4 +1,6 @@
 # Changelog:
+## Version 1.0.27
+- Updated base image to debian:bullseye-20240612-slim
 ## Version 1.0.26
 - Updated base image to debian:bullseye-20240513-slim
 ## Version 1.0.25

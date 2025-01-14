@@ -1,4 +1,4 @@
-FROM debian:bookworm-20241223-slim
+FROM debian:bookworm-20250113-slim
 
 # Install prerequisites
 RUN apt-get update && \

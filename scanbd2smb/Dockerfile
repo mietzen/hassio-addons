@@ -12,6 +12,7 @@ RUN apt-get update && \
         libusb-dev \
         smbclient \
         jq \
+        dbus \
     && rm -rf /tmp/* /var/{cache,log}/* /var/lib/apt/lists/*
 
 COPY ./scan.sh /scan.sh

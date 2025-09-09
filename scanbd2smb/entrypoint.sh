@@ -22,4 +22,7 @@ echo "  OCR_LANGUAGE=$OCR_LANGUAGE"
 echo "  SCAN_RESOLUTION=$SCAN_RESOLUTION"
 echo "  SCAN_MODE=$SCAN_MODE"
 
+mkdir -p /run/dbus
+dbus-daemon --system --fork
+
 exec /usr/sbin/scanbd -f

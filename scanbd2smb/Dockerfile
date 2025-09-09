@@ -2,7 +2,7 @@ FROM debian:trixie-20250908-slim
 
 RUN apt-get update && \
     apt-get install -y \
-        sane \
+        sane-backends \
         scanbd \
         imagemagick \
         exactimage \

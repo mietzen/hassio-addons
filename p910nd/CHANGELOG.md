@@ -1,4 +1,6 @@
 # Changelog:
+## Version 0.1.46
+- Updated base image to debian:bookworm-20250908-slim
 ## Version 0.1.45
 - Updated base image to debian:bookworm-20250811-slim
 ## Version 0.1.44

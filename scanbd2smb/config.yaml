@@ -1,14 +1,14 @@
 name: scanbd2smb
-version: 0.1.0
+version: 0.1.1
 slug: scanbd2smb
 description: Enables you to scan from your USB Scanner to a SMB Folder.
 url: https://github.com/mietzen/hassio-addons/tree/master/scanbd
 arch:
-  - armhf
-  - armv7
-  - aarch64
-  - amd64
-  - i386
+- armhf
+- armv7
+- aarch64
+- amd64
+- i386
 startup: application
 boot: auto
 homeassistant_api: false
@@ -18,15 +18,13 @@ stdin: true
 image: mietzen/hass-addon-scanbd2smb
 init: false
 usb: true
-
 options:
-  smb_share: ""
-  smb_user: ""
-  smb_password: ""
-  ocr_language: "eng"
+  smb_share: ''
+  smb_user: ''
+  smb_password: ''
+  ocr_language: eng
   scan_resolution: 300
-  scan_mode: "Color"
-
+  scan_mode: Color
 schema:
   smb_share: str
   smb_user: str

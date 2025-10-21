@@ -1,4 +1,4 @@
-FROM debian:bookworm-20250929-slim
+FROM debian:bookworm-20251020-slim
 
 RUN apt-get update && \
     apt-get install -y \

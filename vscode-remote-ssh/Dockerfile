@@ -1,4 +1,4 @@
-FROM debian:bookworm-20251020-slim
+FROM debian:bookworm-20251103-slim
 
 ENV LANG C.UTF-8
 

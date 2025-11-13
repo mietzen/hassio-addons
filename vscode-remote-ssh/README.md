@@ -22,7 +22,11 @@ _Example configuration_:
 Addon:
 ```yaml
 ssh_keys: ["ssh-rsa yourverylongsshkey", "ssh-ed25519 andanotherone"]
+
+# Optional:
+persist_ssh_host_keys: true
 ```
+_The `persist_ssh_host_keys` option, when `true`, also stores the SSH host keys in the persistent `/data` directory. This maintains a stable host identity, which is standard practice for SSH servers and prevents `known_hosts` errors on the client._
 
 VS-Code ssh config ($HOME/.ssh/config):
 ```

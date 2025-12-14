@@ -9,7 +9,7 @@ jobs:
   Dependabot:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - name: Install perquisite
         run: |
           pip3 install dockerfile-parse

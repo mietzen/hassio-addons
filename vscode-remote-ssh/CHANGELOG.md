@@ -1,4 +1,6 @@
 # Changelog:
+## Version 1.0.53
+- Updated base image to debian:bookworm-20251229-slim
 ## Version 1.0.52
 - Updated base image to debian:bookworm-20251208-slim
 ## Version 1.0.51

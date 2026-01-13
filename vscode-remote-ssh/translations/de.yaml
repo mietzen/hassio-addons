@@ -2,3 +2,6 @@ configuration:
   ssh_keys:
     name: Autorisierte SSH Schlüssel
     description: SSH Schlüssel denen es erlaubt ist sich mit dem Visual Studio Code Remote SSH Server zu verbinden.
+  persist_ssh_host_keys:
+    name: SSH-Host-Schlüssel beibehalten
+    description: Wenn auf 'true' gesetzt, werden die SSH-Host-Schlüssel im /data-Ordner gespeichert, um Container-Updates zu überstehen.

@@ -1,5 +1,5 @@
 name: scanbd2smb
-version: 0.1.6
+version: 0.1.7
 slug: scanbd2smb
 description: Enables you to scan from your USB Scanner to a SMB Folder.
 url: https://github.com/mietzen/hassio-addons/tree/master/scanbd

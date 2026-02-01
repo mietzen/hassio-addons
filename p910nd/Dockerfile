@@ -8,7 +8,7 @@ RUN apt-get update && \
 RUN mkdir -p /var/lock/p910nd && touch /var/lock/p910nd/p9100d
 
 # Run p910nd
-CMD "/usr/sbin/p910nd -f /dev/usb/lp0 -d"
+CMD "/usr/sbin/p910nd -f /dev/usb/lp0 0 && tail -f /dev/null"
 
 ARG VERSION
 LABEL \

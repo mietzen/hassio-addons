@@ -20,4 +20,4 @@ init: false
 ports:
   9100/tcp: 9100
 devices:
-- /dev/lp0
+- /dev/usb/lp0

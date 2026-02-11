@@ -9,7 +9,7 @@ jobs:
   Dependabot:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - name: Install perquisite
         run: |
           pip3 install dockerfile-parse
@@ -37,7 +37,7 @@ jobs:
       - name: Create Pull Request
         if: steps.commit.outputs.change == 'yes'
         id: pr
-        uses: peter-evans/create-pull-request@v7
+        uses: peter-evans/create-pull-request@v8
         with:
           commit-message: Update report
           committer: merger-bot[bot] <131801252+merger-bot[bot]@users.noreply.github.com>

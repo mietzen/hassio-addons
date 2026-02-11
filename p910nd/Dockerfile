@@ -1,4 +1,4 @@
-FROM debian:bookworm-20260112-slim
+FROM debian:bookworm-20260202-slim
 
 # Install prerequisites
 RUN apt-get update && \
@@ -8,7 +8,7 @@ RUN apt-get update && \
 RUN mkdir -p /var/lock/p910nd && touch /var/lock/p910nd/p9100d
 
 # Run p910nd
-CMD ["/usr/sbin/p910nd","-d"]
+CMD ["/usr/sbin/p910nd", "-f", "/dev/usb/lp0", "-d", "0"]
 
 ARG VERSION
 LABEL \

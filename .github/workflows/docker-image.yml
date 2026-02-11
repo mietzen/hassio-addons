@@ -53,18 +53,18 @@ jobs:
         
         # Generate the matrix by combining addons with platform configurations
         build_matrix=$(jq -sc '
-          .[0] as $addons | 
+          .[0].addons as $addons | 
           .[1].include as $platforms |
           {
-            "include": [
-              $addons.addons[] as $addon |
-              $platforms[] as $platform |
-              {
-                "addon": $addon,
-                "platform": $platform.platform,
-                "runner": $platform.runner
-              }
-            ]
+            "include": (
+              $addons | map(. as $addon | 
+                $platforms | map({
+                  "addon": $addon,
+                  "platform": .platform,
+                  "runner": .runner
+                })
+              ) | flatten
+            )
           }
         ' .github/resources/addons.json .github/resources/platforms.json)
         

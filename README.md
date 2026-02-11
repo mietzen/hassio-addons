@@ -12,8 +12,6 @@ https://github.com/mietzen/hassio-addons
 ## Add-ons in this repository
  - **[Visual Studio Code Remote SSH Server](https://github.com/mietzen/hassio-addons/tree/main/vscode-remote-ssh)**
  - **[P910nd](https://github.com/mietzen/hassio-addons/tree/main/p910nd)**
- - **[ScanBD2SMB](https://github.com/mietzen/hassio-addons/tree/main/scanbd2smb)**
-
 
 ## Credits
 Thanks to [Tom](https://github.com/thomasmauerer), from whom I copied the repo structure and README's as templates!

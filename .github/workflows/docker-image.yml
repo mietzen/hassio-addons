@@ -9,7 +9,7 @@ on:
 
 jobs:
   Setup:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     outputs:
       build: ${{ steps.set-matrix.outputs.build }}
       build_matrix: ${{ steps.set-matrix.outputs.build_matrix }}
@@ -50,12 +50,29 @@ jobs:
         else
           ls -d */ | cut -d'/' -f1 | uniq | xargs echo -n | jq -Rsc 'split(" ") | { "addons": (.) }' > .github/resources/addons.json
         fi
-        build_matrix=$(jq -sc '.[0] * .[1]' .github/resources/addons.json .github/resources/platforms.json)
+        
+        # Generate the matrix by combining addons with platform configurations
+        build_matrix=$(jq -sc '
+          .[0] as $addons | 
+          .[1].include as $platforms |
+          {
+            "include": [
+              $addons.addons[] as $addon |
+              $platforms[] as $platform |
+              {
+                "addon": $addon,
+                "platform": $platform.platform,
+                "runner": $platform.runner
+              }
+            ]
+          }
+        ' .github/resources/addons.json .github/resources/platforms.json)
+        
         echo "build_matrix=${build_matrix}" >> $GITHUB_OUTPUT
         echo "push_matrix=$(cat .github/resources/addons.json)" >> $GITHUB_OUTPUT
 
   Build:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.runner }}
     needs: Setup
     if: needs.Setup.outputs.build == 'yes'
     strategy:
@@ -147,7 +164,7 @@ jobs:
 
   Shared-Manifest:
     if: github.event_name == 'push'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     needs: 
       - Build
       - Setup
@@ -193,7 +210,7 @@ jobs:
 
   Check-Build:
     if: ${{ always() }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     needs: 
       - Build
       - Shared-Manifest

@@ -1,15 +1,12 @@
 name: Visual Studio Code Remote SSH Server
-version: 1.0.55
+version: 1.1.0
 slug: vscode-remote-ssh
 description: Enables you to connect to Home Assistant via Visual Studio Code Remote
   SSH.
 url: https://github.com/mietzen/hassio-addons/tree/master/vscode-remote-ssh
 arch:
-- armhf
-- armv7
 - aarch64
 - amd64
-- i386
 startup: application
 boot: auto
 homeassistant_api: true

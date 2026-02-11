@@ -1,4 +1,7 @@
 # Changelog:
+## Version 1.0.0
+- Updated base image to debian:trixie-20260202-slim
+- Removed i368, armv6, armv7
 ## Version 0.1.59
 - Updated base image to debian:bookworm-20260202-slim
 ## Version 0.1.53

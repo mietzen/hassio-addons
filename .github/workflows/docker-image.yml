@@ -50,14 +50,14 @@ jobs:
         else
           ls -d */ | cut -d'/' -f1 | uniq | xargs echo -n | jq -Rsc 'split(" ") | { "addons": (.) }' > .github/resources/addons.json
         fi
-        
+
         # Generate the matrix by combining addons with platform configurations
         build_matrix=$(jq -sc '
-          .[0].addons as $addons | 
+          .[0].addons as $addons |
           .[1].include as $platforms |
           {
             "include": (
-              $addons | map(. as $addon | 
+              $addons | map(. as $addon |
                 $platforms | map({
                   "addon": $addon,
                   "platform": .platform,
@@ -67,7 +67,7 @@ jobs:
             )
           }
         ' .github/resources/addons.json .github/resources/platforms.json)
-        
+
         echo "build_matrix=${build_matrix}" >> $GITHUB_OUTPUT
         echo "push_matrix=$(cat .github/resources/addons.json)" >> $GITHUB_OUTPUT
 
@@ -77,8 +77,7 @@ jobs:
     if: needs.Setup.outputs.build == 'yes'
     strategy:
       fail-fast: false
-      matrix:
-        ${{ insert }}: ${{ fromJson(needs.Setup.outputs.build_matrix) }}
+      matrix: ${{ fromJson(needs.Setup.outputs.build_matrix) }}
     steps:
     - name: Checkout
       uses: actions/checkout@v6
@@ -104,10 +103,10 @@ jobs:
     - name: Build
       env:
         DOCKER_USER: ${{ vars.DOCKER_HUB_USERNAME || github.actor }}
-        ADDON: ${{ matrix.addons }}
+        ADDON: ${{ matrix.addon }}
         BUILD_NR: ${{ github.run_number }}
-        PLATFORM: ${{ matrix.platforms }}
-      working-directory: ./${{ matrix.addons }}
+        PLATFORM: ${{ matrix.platform }}
+      working-directory: ./${{ matrix.addon }}
       run: |
         ARCH=$(echo "${PLATFORM}" | awk -F  "/" '{print $2$3}')
         VERSION=$(yq -r .version config.yaml)
@@ -126,10 +125,10 @@ jobs:
     - name: Test
       env:
         DOCKER_USER: ${{ vars.DOCKER_HUB_USERNAME || github.actor }}
-        ADDON: ${{ matrix.addons }}
+        ADDON: ${{ matrix.addon }}
         BUILD_NR: ${{ github.run_number }}
-        PLATFORM: ${{ matrix.platforms }}
-      working-directory: ./${{ matrix.addons }}
+        PLATFORM: ${{ matrix.platform }}
+      working-directory: ./${{ matrix.addon }}
       run: |
         set -a
         ARCH=$(echo "${PLATFORM}" | awk -F  "/" '{print $2$3}')
@@ -146,10 +145,10 @@ jobs:
       if: github.event_name == 'push'
       env:
         DOCKER_USER: ${{ vars.DOCKER_HUB_USERNAME || github.actor }}
-        ADDON: ${{ matrix.addons }}
+        ADDON: ${{ matrix.addon }}
         BUILD_NR: ${{ github.run_number }}
-        PLATFORM: ${{ matrix.platforms }}
-      working-directory: ./${{ matrix.addons }}
+        PLATFORM: ${{ matrix.platform }}
+      working-directory: ./${{ matrix.addon }}
       run: |
         ARCH=$(echo "${PLATFORM}" | awk -F  "/" '{print $2$3}')
         VERSION=$(yq -r .version config.yaml)
@@ -165,13 +164,12 @@ jobs:
   Shared-Manifest:
     if: github.event_name == 'push'
     runs-on: ubuntu-24.04
-    needs: 
+    needs:
       - Build
       - Setup
     strategy:
       fail-fast: false
-      matrix:
-        ${{ insert }}: ${{ fromJson(needs.Setup.outputs.push_matrix) }}
+      matrix: ${{ fromJson(needs.Setup.outputs.push_matrix) }}
     steps:
     - name: Checkout
       uses: actions/checkout@v6
@@ -200,7 +198,7 @@ jobs:
         while read -r PLATFORM; do
           ARCH=$(echo "${PLATFORM}" | awk -F  "/" '{print $2$3}')
           echo -n " ${DOCKER_USER}/hass-addon-${ADDON}:${VERSION}-${ARCH}-${BUILD_NR}" >> push-shared-tags.sh
-        done <<< "$(cat ../.github/resources/platforms.json | jq -r '.platforms | join("\n")')"
+        done <<< "$(cat ../.github/resources/platforms.json | jq -r '.include[].platform | join("\n")')"
         echo "" >> push-shared-tags.sh
         echo "docker manifest push ${DOCKER_USER}/hass-addon-${ADDON}:${VERSION}" >> push-shared-tags.sh
         echo "exit 0" >> push-shared-tags.sh
@@ -211,7 +209,7 @@ jobs:
   Check-Build:
     if: ${{ always() }}
     runs-on: ubuntu-24.04
-    needs: 
+    needs:
       - Build
       - Shared-Manifest
     steps:

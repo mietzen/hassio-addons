@@ -1,4 +1,4 @@
-## **Status: Untested Beta ×**
+## **Status: Stable ✓**
 
 # Home Assistant Add-on: p910nd
 

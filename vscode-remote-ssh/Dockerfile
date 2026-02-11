@@ -1,4 +1,4 @@
-FROM debian:bookworm-20260202-slim
+FROM debian:trixie-20260202-slim
 
 ENV LANG C.UTF-8
 
@@ -31,7 +31,7 @@ RUN sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master
     chsh -s $(which zsh)
 
 # Add bashio
-ARG BASHIO_VERSION=v0.14.3
+ARG BASHIO_VERSION=v0.17.5
 RUN wget -O /tmp/bashio.tar.gz "https://github.com/hassio-addons/bashio/archive/${BASHIO_VERSION}.tar.gz" && \
     mkdir /tmp/bashio && \
     tar zxvf tmp/bashio.tar.gz --strip 1 -C /tmp/bashio && \
@@ -39,8 +39,8 @@ RUN wget -O /tmp/bashio.tar.gz "https://github.com/hassio-addons/bashio/archive/
     ln -s /usr/lib/bashio/bashio /usr/bin/bashio
 
 # Add tempio and cli
-ARG TEMPIO_VERSION=2021.09.0
-ARG HA_CLI_VERSION=4.18.0
+ARG TEMPIO_VERSION=2024.11.2
+ARG HA_CLI_VERSION=4.46.0
 RUN case $(uname -m) in \
         "x86_64") dl_arch="amd64" ;; \
         "aarch64") dl_arch="aarch64" ;; \

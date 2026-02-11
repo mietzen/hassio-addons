@@ -55,6 +55,8 @@ if bashio::config.has_value 'ssh_keys'; then
     mkdir -p /root/.ssh
     while read -r key; do
         echo "${key}" >> /root/.ssh/authorized_keys
+        chmod 700 /root/.ssh
+        chmod 600 /root/.ssh/authorized_keys
         bashio::log.notice "Added ${key} to /root/.ssh/authorized_keys"
     done <<< "$(bashio::config 'ssh_keys')"
 fi

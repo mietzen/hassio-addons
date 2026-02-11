@@ -1,4 +1,6 @@
 # Changelog:
+## Version 1.2.0
+- Fixed .ssh permissions
 ## Version 1.1.1
 - fixing docker manifest
 ## Version 1.1.0

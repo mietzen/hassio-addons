@@ -1,4 +1,6 @@
 # Changelog:
+## Version 1.1.1
+- fixing docker manifest
 ## Version 1.1.0
 - Updated base image to debian:trixie-20260202-slim
 - Removed i368, armv6, armv7

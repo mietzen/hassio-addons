@@ -62,6 +62,6 @@ if bashio::config.has_value 'ssh_keys'; then
 fi
 
 # Export Supervisor token so the ha CLI works in SSH sessions
-echo "export SUPERVISOR_TOKEN=${SUPERVISOR_TOKEN}" > /etc/environment
+echo "export SUPERVISOR_TOKEN=${SUPERVISOR_TOKEN:-}" > /etc/environment
 
 exec /usr/sbin/sshd -D

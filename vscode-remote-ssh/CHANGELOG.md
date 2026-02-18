@@ -1,4 +1,6 @@
 # Changelog:
+## Version 1.3.0
+- Fixed missing ha token
 ## Version 1.2.0
 - Fixed .ssh permissions
 ## Version 1.1.1

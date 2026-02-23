@@ -6,7 +6,7 @@ Publishes host system metrics to MQTT using psmqtt.
 
 ### Option: `mqtt_host`
 
-The hostname or IP address of your MQTT broker. **Required.**
+The hostname or IP address of your MQTT broker. **Required.** Use `core-mosquitto` for the built-in Mosquitto addon.
 
 ### Option: `mqtt_port`
 
@@ -24,45 +24,35 @@ Password for MQTT broker authentication.
 
 The MQTT client ID used by psmqtt. Defaults to `psmqtt`.
 
-### Option: `mqtt_qos` (Optional)
-
-MQTT Quality of Service level. Can be `0`, `1`, or `2`. Defaults to `0`.
-
-### Option: `mqtt_retain` (Optional)
-
-Whether to set the retain flag on published MQTT messages. Defaults to `false`.
-
-### Option: `mqtt_clean_session` (Optional)
-
-Whether to use a clean MQTT session on each connection. Defaults to `true`.
-
-### Option: `mqtt_reconnect_period_sec` (Optional)
-
-Seconds to wait before reconnecting to the MQTT broker after a disconnect. Defaults to `5`.
-
 ### Option: `mqtt_publish_topic_prefix` (Optional)
 
 Optional prefix prepended to all MQTT topics.
-
-### Option: `mqtt_ha_discovery_enabled` (Optional)
-
-Enable Home Assistant MQTT auto-discovery for psmqtt sensors. Defaults to `true`.
-
-### Option: `mqtt_ha_discovery_topic` (Optional)
-
-The MQTT topic prefix used for Home Assistant discovery. Defaults to `homeassistant`.
 
 ### Option: `mqtt_ha_discovery_device_name` (Optional)
 
 Custom device name for Home Assistant discovery. Leave empty to use the hostname.
 
+### Option: `smart_devices` (Optional)
+
+List of block device paths to monitor with SMART (e.g., `/dev/sda`, `/dev/sdb`). The addon includes `smartmontools` and runs with `SYS_RAWIO` capability for SMART access. HA OS does not include SMART tools, so this addon handles it internally.
+
+### Option: `smart_short_test_schedule` (Optional)
+
+Cron schedule for SMART short self-tests. Defaults to `0 3 * * 0` (weekly on Sunday at 3:00 AM). Uses standard cron syntax.
+
+### Option: `smart_long_test_schedule` (Optional)
+
+Cron schedule for SMART extended self-tests. Defaults to `0 4 1 * *` (monthly on the 1st at 4:00 AM). Uses standard cron syntax.
+
 ### Option: `logging_level` (Optional)
 
-The logging verbosity level for psmqtt. Can be `debug`, `info`, `warning`, or `error`. Defaults to `info`.
+The logging verbosity level for psmqtt. Can be `DEBUG`, `INFO`, `WARNING`, or `ERROR`. Defaults to `INFO`.
 
 ### Option: `schedule_yaml`
 
 The full psmqtt schedule configuration in YAML format. This defines which system metrics to collect, how often, and which MQTT topics to publish to.
+
+The host root filesystem is mounted read-only at `/host/root` inside the container. Use this path for `disk_usage` tasks to report host disk usage.
 
 Example:
 
@@ -84,6 +74,31 @@ Example:
         icon: "mdi:memory"
         unit_of_measurement: "%"
         state_class: "measurement"
+    - task: disk_usage
+      params: ["/host/root", percent]
+      topic: "psmqtt/{hostname}/disk/percent"
+      ha_discovery:
+        name: "Disk Usage"
+        icon: "mdi:harddisk"
+        unit_of_measurement: "%"
+        state_class: "measurement"
 ```
 
-For all available tasks (CPU, memory, disk, network, temperature, fans, battery, processes), see the [psmqtt documentation](https://github.com/eschava/psmqtt/blob/master/doc/usage.md).
+For all available tasks (CPU, memory, disk, network, temperature, fans, battery, processes, SMART), see the [psmqtt documentation](https://github.com/eschava/psmqtt/blob/master/doc/usage.md).
+
+## Fixed MQTT Settings
+
+The following MQTT settings are fixed for optimal HA integration and cannot be changed:
+
+| Setting | Value |
+|---|---|
+| QoS | 1 |
+| Retain | true |
+| Clean Session | false |
+| Reconnect Period | 10 seconds |
+| HA Discovery | enabled |
+| HA Discovery Topic | homeassistant |
+
+## Protection Mode
+
+This addon requires **Protection mode to be disabled** in the addon settings for full host access (disk metrics, SMART monitoring). Navigate to the addon's Info tab and disable "Protection mode".

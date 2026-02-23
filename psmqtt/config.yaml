@@ -1,5 +1,5 @@
 name: psmqtt
-version: 0.1.0
+version: 0.2.0
 slug: psmqtt
 description: Publishes host system metrics to MQTT using psmqtt.
 url: https://github.com/mietzen/hassio-addons/tree/main/psmqtt
@@ -9,6 +9,9 @@ arch:
 startup: application
 boot: auto
 host_network: true
+full_access: true
+privileged:
+- SYS_RAWIO
 image: mietzen/hass-addon-psmqtt
 init: false
 options:
@@ -17,15 +20,12 @@ options:
   mqtt_username: ""
   mqtt_password: ""
   mqtt_clientid: psmqtt
-  mqtt_qos: 0
-  mqtt_retain: false
-  mqtt_clean_session: true
-  mqtt_reconnect_period_sec: 5
   mqtt_publish_topic_prefix: ""
-  mqtt_ha_discovery_enabled: true
-  mqtt_ha_discovery_topic: homeassistant
   mqtt_ha_discovery_device_name: ""
-  logging_level: info
+  smart_devices: []
+  smart_short_test_schedule: "0 3 * * 0"
+  smart_long_test_schedule: "0 4 1 * *"
+  logging_level: INFO
   schedule_yaml: |
     - cron: "every 5 minutes"
       tasks:
@@ -45,7 +45,7 @@ options:
             unit_of_measurement: "%"
             state_class: "measurement"
         - task: disk_usage
-          params: ["/", percent]
+          params: ["/host/root", percent]
           topic: "psmqtt/{hostname}/disk/percent"
           ha_discovery:
             name: "Disk Usage"
@@ -58,13 +58,11 @@ schema:
   mqtt_username: str?
   mqtt_password: password?
   mqtt_clientid: str?
-  mqtt_qos: "list(0|1|2)?"
-  mqtt_retain: bool?
-  mqtt_clean_session: bool?
-  mqtt_reconnect_period_sec: int?
   mqtt_publish_topic_prefix: str?
-  mqtt_ha_discovery_enabled: bool?
-  mqtt_ha_discovery_topic: str?
   mqtt_ha_discovery_device_name: str?
-  logging_level: "list(debug|info|warning|error)?"
+  smart_devices:
+  - str
+  smart_short_test_schedule: str?
+  smart_long_test_schedule: str?
+  logging_level: "list(DEBUG|INFO|WARNING|ERROR)?"
   schedule_yaml: str

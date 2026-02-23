@@ -14,33 +14,30 @@ configuration:
   mqtt_clientid:
     name: MQTT Client ID
     description: The MQTT client ID used by psmqtt.
-  mqtt_qos:
-    name: MQTT QoS
-    description: MQTT Quality of Service level (0, 1, or 2).
-  mqtt_retain:
-    name: MQTT Retain
-    description: Whether to set the retain flag on published MQTT messages.
-  mqtt_clean_session:
-    name: MQTT Clean Session
-    description: Whether to use a clean MQTT session on each connection.
-  mqtt_reconnect_period_sec:
-    name: MQTT Reconnect Period
-    description: Seconds to wait before reconnecting to the MQTT broker after a disconnect.
   mqtt_publish_topic_prefix:
     name: MQTT Topic Prefix
     description: Optional prefix prepended to all MQTT topics.
-  mqtt_ha_discovery_enabled:
-    name: HA Discovery Enabled
-    description: Enable Home Assistant MQTT auto-discovery for psmqtt sensors.
-  mqtt_ha_discovery_topic:
-    name: HA Discovery Topic
-    description: The MQTT topic prefix used for Home Assistant discovery (default "homeassistant").
   mqtt_ha_discovery_device_name:
     name: HA Discovery Device Name
     description: Custom device name for Home Assistant discovery. Leave empty to use the hostname.
+  smart_devices:
+    name: SMART Devices
+    description: >-
+      List of block device paths to monitor with SMART (e.g., /dev/sda, /dev/sdb).
+      Requires the devices to be passed through to the addon.
+  smart_short_test_schedule:
+    name: SMART Short Test Schedule
+    description: >-
+      Cron schedule for SMART short self-tests (default: weekly on Sunday at 3:00 AM).
+      Uses standard cron syntax (e.g., "0 3 * * 0").
+  smart_long_test_schedule:
+    name: SMART Long Test Schedule
+    description: >-
+      Cron schedule for SMART extended self-tests (default: monthly on the 1st at 4:00 AM).
+      Uses standard cron syntax (e.g., "0 4 1 * *").
   logging_level:
     name: Log Level
-    description: The logging verbosity level for psmqtt.
+    description: The logging verbosity level for psmqtt (DEBUG, INFO, WARNING, ERROR).
   schedule_yaml:
     name: Schedule Configuration (YAML)
     description: >-

@@ -43,7 +43,7 @@ schedule_yaml: |
           unit_of_measurement: "%"
           state_class: "measurement"
       - task: disk_usage
-        params: ["/", percent]
+        params: ["/host/root", percent]
         topic: "psmqtt/{hostname}/disk/percent"
         ha_discovery:
           name: "Disk Usage"

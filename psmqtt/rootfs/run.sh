@@ -7,11 +7,6 @@
 
 CONFIG_FILE="/opt/psmqtt/conf/psmqtt.yaml"
 
-# Bind-mount host root filesystem read-only for disk_usage monitoring
-mkdir -p /host/root
-mount --bind / /host/root 2>/dev/null && mount -o remount,ro,bind /host/root 2>/dev/null || \
-    bashio::log.warning "Could not mount host root at /host/root, disk_usage for host paths may not work"
-
 # Setup SMART monitoring for configured devices
 SMART_DEVICES=$(bashio::config 'smart_devices')
 if [ -n "${SMART_DEVICES}" ] && [ "${SMART_DEVICES}" != "null" ]; then

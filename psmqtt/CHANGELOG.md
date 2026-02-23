@@ -1,4 +1,8 @@
 # Changelog:
+## Version 0.3.0
+
+- Fixing Mounts
+
 ## Version 0.2.0
 
 - Added full host access for disk metrics (mount at /host/root)

@@ -1,5 +1,5 @@
 name: psmqtt
-version: 0.2.0
+version: 0.3.0
 slug: psmqtt
 description: Publishes host system metrics to MQTT using psmqtt.
 url: https://github.com/mietzen/hassio-addons/tree/main/psmqtt
@@ -10,6 +10,8 @@ startup: application
 boot: auto
 host_network: true
 full_access: true
+map:
+- config:rw
 privileged:
 - SYS_RAWIO
 image: mietzen/hass-addon-psmqtt
@@ -45,7 +47,7 @@ options:
             unit_of_measurement: "%"
             state_class: "measurement"
         - task: disk_usage
-          params: ["/host/root", percent]
+          params: ["/config", percent]
           topic: "psmqtt/{hostname}/disk/percent"
           ha_discovery:
             name: "Disk Usage"

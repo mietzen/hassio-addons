@@ -1,6 +1,6 @@
 FROM debian:trixie-20260202-slim
 
-ENV LANG C.UTF-8
+ENV LANG=C.UTF-8
 
 # Copy script
 COPY rootfs /
@@ -15,6 +15,8 @@ RUN apt-get update && \
         python3 \
         python3-pip \
         python3-venv \
+        cron \
+        smartmontools \
         wget \
     && \
     rm -rf /tmp/* /var/{cache,log}/* /var/lib/apt/lists/*

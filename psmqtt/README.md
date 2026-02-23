@@ -20,7 +20,7 @@ This add-on runs [psmqtt](https://github.com/eschava/psmqtt) to collect system m
 _Example configuration_:
 
 ```yaml
-mqtt_host: "192.168.1.100"
+mqtt_host: core-mosquitto
 mqtt_port: 1883
 mqtt_username: "mqtt_user"
 mqtt_password: "mqtt_pass"

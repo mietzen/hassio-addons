@@ -46,7 +46,7 @@ jobs:
         fi
 
         if ! [[ ${GITHUB_EVENT_NAME} == 'workflow_dispatch' ]]; then
-          git --no-pager diff HEAD HEAD~1 --name-only | grep -v -E '^\.' | grep -E '\/' | cut -d'/' -f1 | uniq | xargs echo -n | jq -Rsc 'split(" ") | { "addons": (.) }' > .github/resources/addons.json
+          git --no-pager diff HEAD HEAD~1 --name-only | grep -v -E '^\.' | grep -E '\/' | cut -d'/' -f1 | uniq | while read -r dir; do [ -d "$dir" ] && echo "$dir"; done | xargs echo -n | jq -Rsc 'split(" ") | { "addons": (.) }' > .github/resources/addons.json
         else
           ls -d */ | cut -d'/' -f1 | uniq | xargs echo -n | jq -Rsc 'split(" ") | { "addons": (.) }' > .github/resources/addons.json
         fi

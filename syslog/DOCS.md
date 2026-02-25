@@ -1,5 +1,13 @@
 # Syslog Home Assistant add-on
 
+**Mirror of [ha-addon-syslog](https://github.com/mib1185/ha-addon-syslog) with [RFC5424 patches of IngmarStein](https://github.com/mib1185/ha-addon-syslog/pull/30) applied.**
+
+Copy of the original [LICENSE](syslog/LICENSE) is provided.
+
+You can checkout the original [Apache License 2.0](https://github.com/mib1185/ha-addon-syslog/blob/main/LICENSE) and code at: [https://github.com/mib1185/ha-addon-syslog](https://github.com/mib1185/ha-addon-syslog)
+
+---
+
 ## How to use
 
 This add-on allows you to send your HAOS logs to a remote syslog server.

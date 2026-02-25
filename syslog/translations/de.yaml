@@ -1,0 +1,19 @@
+configuration:
+  syslog_host:
+    name: Syslog Host
+    description: Der Hostanme oder die IP-Adresse des Syslog-Server, an welchen die HAOS-Logs gesendet werden sollen.
+  syslog_port:
+    name: Syslog Port
+    description: Der Port des Syslog-Server, an welchen die HAOS-Logs gesendet werden sollen.
+  syslog_protocol:
+    name: Übertragungsprotokol
+    description: Das Übertragungsprotokol welches zum Senden der HAOS-Logs verwendet werden soll.
+  syslog_ssl:
+    name: SSL Verschlüsselung
+    description: Aktivieren oder deaktivieren der SSL Verschlüsselung (wird nur bei tcp unterstützt).
+  syslog_ssl_verify:
+    name: SSL-Zertifikat überprüfen
+    description: Prüfung des SSL-Zertifikate aktivieren oder dekativieren.
+  syslog_format:
+    name: Syslog Format
+    description: Das Format der Syslog-Nachricht.

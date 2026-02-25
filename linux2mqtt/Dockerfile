@@ -11,6 +11,7 @@ RUN apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y \
         ca-certificates \
         curl \
+        git \
         jq \
         python3 \
         python3-pip \
@@ -21,9 +22,9 @@ RUN apt-get update && \
     && \
     rm -rf /tmp/* /var/{cache,log}/* /var/lib/apt/lists/*
 
-# Install psmqtt in a venv (Debian trixie enforces PEP 668)
-RUN python3 -m venv /opt/psmqtt-venv && \
-    /opt/psmqtt-venv/bin/pip install --no-cache-dir psmqtt
+# Install linux2mqtt in a venv (Debian trixie enforces PEP 668)
+RUN python3 -m venv /opt/linux2mqtt-venv && \
+    /opt/linux2mqtt-venv/bin/pip install --no-cache-dir git+https://github.com/mietzen/linux2mqtt.git@dev
 
 # Add bashio
 ARG BASHIO_VERSION=v0.17.5
@@ -43,24 +44,21 @@ RUN case $(uname -m) in \
     wget -O /usr/bin/tempio "https://github.com/home-assistant/tempio/releases/download/${TEMPIO_VERSION}/tempio_${dl_arch}" && \
     chmod a+x /usr/bin/tempio
 
-# Create config directory
-RUN mkdir -p /opt/psmqtt/conf
-
-# Start psmqtt
+# Start linux2mqtt
 CMD [ "/run.sh" ]
 
 ARG VERSION
 LABEL \
-    io.hass.name="psmqtt" \
-    io.hass.description="Publishes host system metrics to MQTT using psmqtt." \
+    io.hass.name="linux2mqtt" \
+    io.hass.description="Publishes Home Assistant host system metrics to MQTT." \
     io.hass.version="${VERSION}" \
     io.hass.type="addon" \
     io.hass.arch="aarch64|amd64" \
     maintainer="Nils Stein <social.nst@mailbox.org>" \
-    org.opencontainers.image.title="psmqtt" \
-    org.opencontainers.image.description="Publishes host system metrics to MQTT using psmqtt." \
+    org.opencontainers.image.title="linux2mqtt" \
+    org.opencontainers.image.description="Publishes Home Assistant host system metrics to MQTT." \
     org.opencontainers.image.vendor="Nils Home Assistant Add-ons" \
     org.opencontainers.image.authors="Nils Stein <social.nst@mailbox.org>" \
     org.opencontainers.image.licenses="MIT" \
     org.opencontainers.image.source="https://github.com/mietzen/hassio-addons" \
-    org.opencontainers.image.documentation="https://github.com/mietzen/hassio-addons/blob/main/psmqtt/README.md"
+    org.opencontainers.image.documentation="https://github.com/mietzen/hassio-addons/blob/main/linux2mqtt/README.md"

@@ -1,0 +1,20 @@
+configuration:
+  mqtt_host:
+    name: MQTT Broker Host
+    description: The hostname or IP address of your MQTT broker (default "core-mosquitto").
+  mqtt_user:
+    name: MQTT Username
+    description: Username for MQTT broker authentication (leave empty if not required).
+  mqtt_password:
+    name: MQTT Password
+    description: Password for MQTT broker authentication (leave empty if not required).
+  smart_short_test_schedule:
+    name: SMART Short Test Schedule
+    description: >-
+      Cron schedule for SMART short self-tests (default: weekly on Sunday at 3:00 AM).
+      Uses standard cron syntax (e.g., "0 3 * * 0").
+  smart_long_test_schedule:
+    name: SMART Long Test Schedule
+    description: >-
+      Cron schedule for SMART extended self-tests (default: monthly on the 1st at 4:00 AM).
+      Uses standard cron syntax (e.g., "0 4 1 * *").

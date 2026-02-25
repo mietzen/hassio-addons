@@ -10,8 +10,6 @@ startup: application
 boot: auto
 host_network: true
 full_access: true
-map:
-- config:rw
 privileged:
 - SYS_RAWIO
 - SYS_ADMIN

@@ -73,7 +73,7 @@ fi
 
 bashio::log.notice "Starting linux2mqtt..."
 
-LINUX2MQTT_ARGS="--interval 60 --cpu=60 --vm --temp --du='/config'"
+LINUX2MQTT_ARGS="--interval 60 --cpu=60 --vm --temp --du='/'"
 
 LOG_VERBOSITY=$(bashio::config 'log_verbosity')
 VERBOSE_FLAG=$(printf '%0.sv' $(seq 1 "${LOG_VERBOSITY}"))

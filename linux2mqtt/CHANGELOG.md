@@ -1,5 +1,9 @@
 # Changelog:
 
+## Version 0.5.0
+
+- Fixed disk usage errors
+
 ## Version 0.4.0
 
 - Set hostname to home-assistant

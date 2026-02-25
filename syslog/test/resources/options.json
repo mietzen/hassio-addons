@@ -1,0 +1,8 @@
+{
+    "syslog_host": "127.0.0.1",
+    "syslog_port": 514,
+    "syslog_protocol": "udp",
+    "syslog_ssl": false,
+    "syslog_ssl_verify": true,
+    "syslog_format": "RFC3164"
+}

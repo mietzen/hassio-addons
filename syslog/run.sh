@@ -1,5 +1,9 @@
-#!/usr/bin/with-contenv bashio
-# shellcheck shell=bash
+#!/usr/bin/env bashio
+
+# ==============================================================================
+# Syslog Home Assistant Add-on
+# Reads HA config and forwards journal logs to a remote syslog server
+# ==============================================================================
 
 bashio::log.info "Set configuration..."
 SYSLOG_HOST=$(bashio::config 'syslog_host')
@@ -14,9 +18,9 @@ SYSLOG_SSL_VERIFY=$(bashio::config 'syslog_ssl_verify')
 export SYSLOG_SSL_VERIFY
 SYSLOG_FORMAT=$(bashio::config 'syslog_format')
 export SYSLOG_FORMAT
-HAOS_HOSTNAME=$(bashio::info.hostname)
+HAOS_HOSTNAME=$(bashio::info.hostname 2>/dev/null || hostname)
 export HAOS_HOSTNAME
 
 # Run daemon
 bashio::log.info "Starting the daemon..."
-python3 /journal2syslog.py
+exec python3 /journal2syslog.py

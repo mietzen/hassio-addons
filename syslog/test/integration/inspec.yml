@@ -1,0 +1,5 @@
+name: syslog
+title: syslog Integration Test
+maintainer: Nils Stein
+license: Apache-2.0
+summary: Integration test for syslog add-on

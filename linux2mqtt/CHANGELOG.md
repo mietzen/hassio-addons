@@ -1,5 +1,10 @@
 # Changelog:
 
+## Version 0.2.0
+
+- Fix SMART device discovery
+- Added new Icon
+
 ## Version 0.1.0
 
 - Initial release

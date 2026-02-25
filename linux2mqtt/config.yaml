@@ -1,5 +1,5 @@
 name: linux2mqtt
-version: 0.5.0
+version: 0.5.1
 slug: linux2mqtt
 description: Publishes Home Assistant host system metrics to MQTT.
 url: https://github.com/mietzen/hassio-addons/tree/main/linux2mqtt
@@ -17,10 +17,10 @@ image: mietzen/hass-addon-linux2mqtt
 init: false
 options:
   mqtt_host: core-mosquitto
-  mqtt_user: ""
-  mqtt_password: ""
-  smart_short_test_schedule: "0 3 * * 0"
-  smart_long_test_schedule: "0 4 1 * *"
+  mqtt_user: ''
+  mqtt_password: ''
+  smart_short_test_schedule: 0 3 * * 0
+  smart_long_test_schedule: 0 4 1 * *
   log_verbosity: 4
 schema:
   mqtt_host: str

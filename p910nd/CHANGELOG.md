@@ -1,4 +1,6 @@
 # Changelog:
+## Version 1.0.2
+- Updated base image to debian:trixie-20260223-slim
 ## Version 1.0.1
 - fixing docker manifest
 ## Version 1.0.0

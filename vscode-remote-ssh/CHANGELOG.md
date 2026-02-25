@@ -1,4 +1,6 @@
 # Changelog:
+## Version 1.3.1
+- Updated base image to debian:trixie-20260223-slim
 ## Version 1.3.0
 - Fixed missing ha token
 ## Version 1.2.0

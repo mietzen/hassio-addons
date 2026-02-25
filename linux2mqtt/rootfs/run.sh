@@ -29,8 +29,8 @@ fi
 SMART_SHORT_SCHEDULE=$(bashio::config 'smart_short_test_schedule')
 SMART_LONG_SCHEDULE=$(bashio::config 'smart_long_test_schedule')
 
-# Discover all block devices for SMART testing
-SMART_DEVICES=$(lsblk -dno NAME,TYPE | awk '$2=="disk"{print "/dev/"$1}')
+# Discover SMART-capable devices
+SMART_DEVICES=$(smartctl --scan 2>/dev/null | awk '{print $1}')
 if [ -n "${SMART_DEVICES}" ]; then
     SHORT_SCRIPT="/opt/linux2mqtt/smart-short-test.sh"
     LONG_SCRIPT="/opt/linux2mqtt/smart-long-test.sh"
@@ -74,6 +74,10 @@ fi
 bashio::log.notice "Starting linux2mqtt..."
 
 LINUX2MQTT_ARGS="--interval 60 --cpu=60 --vm --temp --du='/config'"
+
+LOG_VERBOSITY=$(bashio::config 'log_verbosity')
+VERBOSE_FLAG=$(printf '%0.sv' $(seq 1 "${LOG_VERBOSITY}"))
+LINUX2MQTT_ARGS="${LINUX2MQTT_ARGS} -${VERBOSE_FLAG}"
 
 if [ -d "/dev/disk/by-id" ]; then
     LINUX2MQTT_ARGS="${LINUX2MQTT_ARGS} --harddrives"

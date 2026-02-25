@@ -23,9 +23,11 @@ options:
   mqtt_password: ""
   smart_short_test_schedule: "0 3 * * 0"
   smart_long_test_schedule: "0 4 1 * *"
+  log_verbosity: 4
 schema:
   mqtt_host: str
   mqtt_user: str?
   mqtt_password: password?
   smart_short_test_schedule: str?
   smart_long_test_schedule: str?
+  log_verbosity: list(1|2|3|4|5)

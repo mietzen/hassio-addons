@@ -18,3 +18,8 @@ configuration:
     description: >-
       Cron schedule for SMART extended self-tests (default: monthly on the 1st at 4:00 AM).
       Uses standard cron syntax (e.g., "0 4 1 * *").
+  log_verbosity:
+    name: Log Verbosity
+    description: >-
+      Log verbosity level for linux2mqtt (1 = critical, 2 = error, 3 = warning, 4 = info, 5 = debug).
+      Maps to -v through -vvvvv flags. Default is 4 (info).

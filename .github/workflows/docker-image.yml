@@ -97,7 +97,10 @@ jobs:
 
     - name: Install Perquisites
       run: |
-        sudo snap install yq
+        ARCH=$(echo "${PLATFORM}" | awk -F  "/" '{print $2$3}')
+        VERSION=$(curl -sSL https://api.github.com/repos/mikefarah/yq/releases/latest | jq -r '.name' | xargs)
+        wget https://github.com/mikefarah/yq/releases/download/${VERSION}/yq_linux_${ARCH} -O /bin/yq &&\
+        chmod +x /bin/yq
         curl -L https://omnitruck.cinc.sh/install.sh | sudo bash -s -- -P cinc-auditor -v 5
 
     - name: Build

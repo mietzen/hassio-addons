@@ -1,5 +1,9 @@
 # Changelog:
 
+## Version 0.3.0
+
+- Fixed disk usage errors
+
 ## Version 0.2.0
 
 - Fix SMART device discovery

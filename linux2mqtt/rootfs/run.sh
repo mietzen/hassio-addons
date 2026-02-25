@@ -73,10 +73,12 @@ fi
 
 bashio::log.notice "Starting linux2mqtt..."
 
-exec /opt/linux2mqtt-venv/bin/linux2mqtt \
-    --interval 60 \
-    --cpu=60 \
-    --vm \
-    --temp \
-    --harddrives \
-    --du='/config'
+LINUX2MQTT_ARGS="--interval 60 --cpu=60 --vm --temp --du='/config'"
+
+if [ -d "/dev/disk/by-id" ]; then
+    LINUX2MQTT_ARGS="${LINUX2MQTT_ARGS} --harddrives"
+else
+    bashio::log.warning "No /dev/disk/by-id found, skipping hard drive monitoring"
+fi
+
+exec /opt/linux2mqtt-venv/bin/linux2mqtt ${LINUX2MQTT_ARGS}

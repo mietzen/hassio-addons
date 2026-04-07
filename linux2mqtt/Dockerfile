@@ -1,4 +1,4 @@
-FROM debian:trixie-20260316-slim
+FROM debian:trixie-20260406-slim
 
 ENV LANG=C.UTF-8
 

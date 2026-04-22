@@ -1,4 +1,6 @@
 # Changelog:
+## Version 1.1.1
+- Updated base image to debian:trixie-20260421-slim
 ## Version 1.1.0
 - Log timestamps
 ## Version 1.0.4

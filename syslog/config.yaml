@@ -1,5 +1,5 @@
 name: Syslog
-version: 0.4.7
+version: 0.4.8
 slug: syslog
 description: Send your HAOS logs to a remote syslog server
 url: https://github.com/mietzen/hassio-addons/tree/main/syslog

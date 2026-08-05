@@ -1,4 +1,4 @@
-FROM debian:trixie-20260713-slim
+FROM debian:trixie-20260803-slim
 
 # Install prerequisites
 RUN apt-get update && \

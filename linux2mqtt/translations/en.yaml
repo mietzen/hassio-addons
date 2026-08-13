@@ -8,6 +8,13 @@ configuration:
   mqtt_password:
     name: MQTT Password
     description: Password for MQTT broker authentication (leave empty if not required).
+  smart_monitoring:
+    name: SMART Monitoring
+    description: >-
+      Enables SMART hard drive monitoring and SMART self-test scheduling.
+      Requires Protection mode to be disabled. Disable this if the host does not
+      expose SMART data (e.g. Home Assistant OS VMs) or if you want to keep
+      Protection mode enabled.
   smart_short_test_schedule:
     name: SMART Short Test Schedule
     description: >-
@@ -18,6 +25,11 @@ configuration:
     description: >-
       Cron schedule for SMART extended self-tests (default: monthly on the 1st at 4:00 AM).
       Uses standard cron syntax (e.g., "0 4 1 * *").
+  disk_usage:
+    name: Disk Usage Monitoring
+    description: >-
+      Publishes disk usage metrics for the / mount. Requires Protection mode to
+      be disabled. Disable this if you want to keep Protection mode enabled.
   log_verbosity:
     name: Log Verbosity
     description: >-

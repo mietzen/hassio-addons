@@ -1,4 +1,9 @@
 # Changelog:
+## Version 0.6.0
+- SMART monitoring and disk usage are now optional and disabled by default
+  - New `smart_monitoring` option enables SMART self-tests and hard drive metrics
+  - New `disk_usage` option enables disk usage metrics
+  - The addon now runs with Protection mode enabled when both are disabled
 ## Version 0.5.10
 - Updated base image to debian:trixie-20260803-slim
 ## Version 0.5.9

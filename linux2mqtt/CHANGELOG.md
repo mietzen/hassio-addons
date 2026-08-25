@@ -1,4 +1,6 @@
 # Changelog:
+## Version 0.6.1
+- Updated base image to debian:trixie-20260824-slim
 ## Version 0.6.0
 - SMART monitoring and disk usage are now optional and disabled by default
   - New `smart_monitoring` option enables SMART self-tests and hard drive metrics

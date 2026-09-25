@@ -5,55 +5,51 @@ on:
     - cron: "0 14 * * *"
   workflow_dispatch:
 
+permissions:
+  contents: write
+  pull-requests: write
+
 jobs:
   Dependabot:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     steps:
+      - uses: actions/create-github-app-token@v3
+        id: app-token
+        with:
+          client-id: ${{ secrets.APP_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+      - name: Get GitHub App User ID
+        id: get-user-id
+        run: echo "user-id=$(gh api "/users/${{ steps.app-token.outputs.app-slug }}[bot]" --jq .id)" >> "$GITHUB_OUTPUT"
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
       - uses: actions/checkout@v7
+        with:
+          token: ${{ steps.app-token.outputs.token }}
       - name: Install perquisite
         run: |
           pip3 install dockerfile-parse
       - name: Scan for deprecated base images
         run: |
           python3 ./.github/resources/custom_dependabot
-      - name: Commit changes
-        id: commit
+      - name: Commit changes and create PR
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
         run: |
-          if ! [ -z "$(git status --porcelain)" ]; then
-            git config --local user.email "action@github.com"
-            git config --local user.name "GitHub Action Bot"
-            git commit -a -m "Updated base images"
-            echo "change=yes" >> $GITHUB_OUTPUT
-          else
+          if [ -z "$(git status --porcelain)" ]; then
             echo "Nothing to commit!"
-            echo "change=no" >> $GITHUB_OUTPUT
+            exit 0
           fi
-      - uses: actions/create-github-app-token@v3
-        if: steps.commit.outputs.change == 'yes'
-        id: generate-token
-        with:
-          app-id: ${{ secrets.APP_ID }}
-          private-key: ${{ secrets.APP_PRIVATE_KEY }}
-      - name: Create Pull Request
-        if: steps.commit.outputs.change == 'yes'
-        id: pr
-        uses: peter-evans/create-pull-request@v8
-        with:
-          commit-message: Update report
-          committer: merger-bot[bot] <131801252+merger-bot[bot]@users.noreply.github.com>
-          author: merger-bot[bot] <131801252+merger-bot[bot]@users.noreply.github.com>
-          token: ${{ steps.generate-token.outputs.token }}
-          branch: dependabot-update-base-images
-          delete-branch: true
-          title: '[Dependabot] Updated base images'
-          assignees: mietzen
-          labels: |
-            automated pr
-            dependabot
-      - name: Automerge if possible
-        if: steps.commit.outputs.change == 'yes' && steps.pr.outputs.pull-request-operation == 'created'
-        uses: peter-evans/enable-pull-request-automerge@v3
-        with:
-          token: ${{ steps.generate-token.outputs.token }}
-          pull-request-number: ${{ steps.pr.outputs.pull-request-number }}
-          merge-method: squash
+          BRANCH="dependabot-update-base-images"
+          git config --global user.name '${{ steps.app-token.outputs.app-slug }}[bot]'
+          git config --global user.email '${{ steps.get-user-id.outputs.user-id }}+${{ steps.app-token.outputs.app-slug }}[bot]@users.noreply.github.com'
+          git checkout -B "$BRANCH"
+          git commit -a -m "[Dependabot] Updated base images"
+          git push -u origin "$BRANCH" --force
+          PR_URL=$(gh pr create \
+            --title "[Dependabot] Updated base images" \
+            --body "Updated base images" \
+            --assignee "mietzen" \
+            --label "automated pr" \
+            --label "dependabot")
+          gh pr merge --squash --auto "$PR_URL"

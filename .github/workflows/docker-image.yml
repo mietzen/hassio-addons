@@ -9,7 +9,7 @@ on:
 
 jobs:
   Setup:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     outputs:
       build: ${{ steps.set-matrix.outputs.build }}
       build_matrix: ${{ steps.set-matrix.outputs.build_matrix }}
@@ -166,7 +166,7 @@ jobs:
 
   Shared-Manifest:
     if: github.event_name == 'push'
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     needs:
       - Build
       - Setup
@@ -211,7 +211,7 @@ jobs:
 
   Check-Build:
     if: ${{ always() }}
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     needs:
       - Build
       - Shared-Manifest

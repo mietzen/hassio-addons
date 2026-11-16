@@ -1,5 +1,9 @@
 # Changelog:
 
+## Version 0.1.1
+
+- Preserve custom YAML tags (`!env_var`, `!secret`) when updating `appdaemon.yaml`
+
 ## Version 0.1.0
 
 - Initial release

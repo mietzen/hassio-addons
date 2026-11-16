@@ -1,5 +1,5 @@
 name: AppDaemon Store
-version: 0.1.0
+version: 0.1.1
 slug: appdaemon-store
 description: Manage AppDaemon apps from GitHub repositories (HACS replacement for AppDaemon).
 url: https://github.com/mietzen/hassio-addons/tree/main/appdaemon-store

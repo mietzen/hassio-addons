@@ -13,6 +13,7 @@ https://github.com/mietzen/hassio-addons
  - **[Visual Studio Code Remote SSH Server](https://github.com/mietzen/hassio-addons/tree/main/vscode-remote-ssh)**
  - **[P910nd](https://github.com/mietzen/hassio-addons/tree/main/p910nd)**
  - **[linux2mqtt](https://github.com/mietzen/hassio-addons/tree/main/linux2mqtt)**
+ - **[AppDaemon Store](https://github.com/mietzen/hassio-addons/tree/main/appdaemon-store)**
 
 ## Credits
 Thanks to [Tom](https://github.com/thomasmauerer), from whom I copied the repo structure and README's as templates!

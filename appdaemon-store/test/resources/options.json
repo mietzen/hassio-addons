@@ -1,0 +1,8 @@
+{
+    "apps_dir": "",
+    "repositories": [],
+    "github_token": "",
+    "auto_update": false,
+    "check_interval_hours": 6,
+    "log_level": "info"
+}

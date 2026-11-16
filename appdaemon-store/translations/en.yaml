@@ -1,0 +1,27 @@
+configuration:
+  apps_dir:
+    name: Apps Directory
+    description: >-
+      Optional override path for the AppDaemon apps directory (leave empty to
+      auto-detect).
+  repositories:
+    name: Repositories
+    description: >-
+      GitHub repositories (owner/repo or URL) seeded at startup.
+  github_token:
+    name: GitHub Token
+    description: >-
+      Optional GitHub personal access token for higher API rate limits and
+      private repositories.
+  auto_update:
+    name: Auto Update
+    description: >-
+      Automatically update installed apps when new versions are found.
+  check_interval_hours:
+    name: Check Interval (hours)
+    description: >-
+      Interval in hours (1-168) between background update checks. Default is 6.
+  log_level:
+    name: Log Level
+    description: >-
+      Logging verbosity (debug, info, warning, or error). Default is info.
